@@ -1,0 +1,16 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct TheBlock
+{
+    highp float theMember;
+};
+
+uniform TheBlock _14;
+
+void main()
+{
+    gl_FragData[0] = vec4(1.0, cos(_14.theMember), 0.0, 1.0);
+}
+

@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+part 'main.g.dart';
+
 late DateTime now;
 
 void main() {
@@ -19,18 +21,31 @@ class FlutterApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Flutter Test'),
         ),
-        body: const Lol(),
+        body: ListView(
+          children: [
+            for (final asset in okAssets)
+              SizedBox(
+                width: 300,
+                height: 300,
+                child: Lol(
+                  key: Key(asset),
+                  asset: asset,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class Lol extends StatelessWidget {
-  const Lol({super.key});
+  final String asset;
+  const Lol({super.key, required this.asset});
 
   @override
   Widget build(BuildContext context) {
-    final program = FragmentProgram.fromAsset('assets/shader/red.glsl.iplr');
+    final program = FragmentProgram.fromAsset(asset);
 
     return FutureBuilder<FragmentProgram>(
       builder: (_, snap) {
@@ -41,11 +56,18 @@ class Lol extends StatelessWidget {
           );
         }
         if (!snap.hasData) return Container();
-        return CustomPaint(
-          painter: ShaderPainter(
-            shader: snap.data!.fragmentShader(),
-          ),
-          child: const SizedBox.expand(),
+        return Column(
+          children: [
+            Text('$asset worked fine'),
+            Flexible(
+              child: CustomPaint(
+                painter: ShaderPainter(
+                  shader: snap.data!.fragmentShader(),
+                ),
+                child: const SizedBox.expand(),
+              ),
+            ),
+          ],
         );
       },
       future: program,
