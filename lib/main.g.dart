@@ -1,30 +1,3 @@
 part of 'main.dart';
 
-final List<String> okAssets = [
-  "assets/shader/red-original.glsl.runtime-stage-gles.no-iplr.no-json",
-  "assets/shader/red-original.glsl.runtime-stage-gles.iplr.no-json",
-  "assets/shader/red-original.glsl.runtime-stage-gles.no-iplr.json",
-  "assets/shader/red-original.glsl.runtime-stage-gles.iplr.json",
-  "assets/shader/red-original.glsl.runtime-stage-metal.no-iplr.no-json",
-  "assets/shader/red-original.glsl.runtime-stage-metal.iplr.no-json",
-  "assets/shader/red-original.glsl.runtime-stage-metal.no-iplr.json",
-  "assets/shader/red-original.glsl.runtime-stage-metal.iplr.json",
-  "assets/shader/red-original.glsl.sksl.no-iplr.no-json",
-  "assets/shader/red-original.glsl.sksl.iplr.no-json",
-  "assets/shader/red-original.glsl.sksl.no-iplr.json",
-  "assets/shader/red-original.glsl.sksl.iplr.json",
-  "assets/shader/red.glsl.metal-desktop.no-iplr.no-json",
-  "assets/shader/red.glsl.metal-desktop.no-iplr.json",
-  "assets/shader/red.glsl.metal-ios.no-iplr.no-json",
-  "assets/shader/red.glsl.metal-ios.no-iplr.json",
-  "assets/shader/red.glsl.opengl-desktop.no-iplr.no-json",
-  "assets/shader/red.glsl.opengl-desktop.no-iplr.json",
-  "assets/shader/red.glsl.opengl-es.no-iplr.no-json",
-  "assets/shader/red.glsl.opengl-es.no-iplr.json",
-  "assets/shader/red.glsl.runtime-stage-gles.no-iplr.no-json",
-  "assets/shader/red.glsl.runtime-stage-gles.no-iplr.json",
-  "assets/shader/red.glsl.runtime-stage-metal.no-iplr.no-json",
-  "assets/shader/red.glsl.runtime-stage-metal.no-iplr.json",
-  "assets/shader/red.glsl.vulkan.no-iplr.no-json",
-  "assets/shader/red.glsl.vulkan.no-iplr.json"
-];
+final List<String> okAssets = ["assets/flutter-shaders/red-original-lol.glsl"];

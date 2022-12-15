@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 part 'main.g.dart';
 
@@ -60,17 +61,56 @@ class Lol extends StatelessWidget {
           children: [
             Text('$asset worked fine'),
             Flexible(
-              child: CustomPaint(
-                painter: ShaderPainter(
-                  shader: snap.data!.fragmentShader(),
-                ),
-                child: const SizedBox.expand(),
-              ),
+              child: ShaderTicker(shader: snap.data!.fragmentShader(),)
             ),
           ],
         );
       },
       future: program,
+    );
+  }
+}
+
+class ShaderTicker extends StatefulWidget {
+  const ShaderTicker({
+    Key? key,
+    required this.shader,
+  }) : super(key: key);
+
+  final FragmentShader shader;
+  @override
+  _ShaderTickerState createState() => _ShaderTickerState();
+}
+
+class _ShaderTickerState extends State<ShaderTicker>
+    with SingleTickerProviderStateMixin {
+  late final Ticker ticker;
+  Duration changed = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = createTicker((elapsed) {
+      setState(() {
+        changed = elapsed;
+      });
+    });
+    ticker.start();
+  }
+
+  @override
+  void dispose() {
+    ticker.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: ShaderPainter(
+        shader: widget.shader,
+      ),
+      child: const SizedBox.expand(),
     );
   }
 }
@@ -82,8 +122,13 @@ class ShaderPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (size.width == 0 || size.height == 0) {
+      return;
+    }
     shader.setFloat(
         0, now.difference(DateTime.now()).inMilliseconds.toDouble() / 1000);
+    shader.setFloat(1, 1 / size.width);
+    shader.setFloat(2, 1 / size.height);
     final paint = Paint()..shader = shader;
     canvas.drawRect(
       Rect.fromLTWH(
