@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  simple_animations: ^5.0.0+3
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -18,5 +19,6 @@ dev_dependencies:
 flutter:
   shaders:
     - assets/flutter-shaders/red-original-lol.glsl
+    - assets/flutter-shaders/noise-gradient-fragment.glsl
 
   uses-material-design: true

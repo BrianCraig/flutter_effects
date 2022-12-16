@@ -2,17 +2,22 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:shader_toy/shader_decoration.dart';
+import 'package:shader_toy/shaders/noise_gradient_painter.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 part 'main.g.dart';
 
 late DateTime now;
 
 late FragmentProgram fp;
+late FragmentProgram noiseGradientProgram;
 
 void main() async {
   now = DateTime.now();
-  fp = await FragmentProgram.fromAsset('assets/flutter-shaders/red-original-lol.glsl');
+  fp = await FragmentProgram.fromAsset(
+      'assets/flutter-shaders/red-original-lol.glsl');
+  noiseGradientProgram = await FragmentProgram.fromAsset(
+      'assets/flutter-shaders/noise-gradient-fragment.glsl');
   runApp(const FlutterApp());
 }
 
@@ -35,34 +40,65 @@ class FlutterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Test'),
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(16),
-          child: ListView(
-            children: [
-              const Text(bigText),
-              for (final asset in okAssets)
-                SizedBox(
-                  width: 300,
-                  height: 300,
-                  child: Lol(
-                    key: Key(asset),
-                    asset: asset,
-                  ),
+        body: LoopAnimationBuilder<double>(
+          duration: const Duration(seconds: 2),
+          tween: TweenSequence<double>(
+            <TweenSequenceItem<double>>[
+              TweenSequenceItem<double>(
+                tween: Tween<double>(begin: 0.7, end: 1.8).chain(
+                  CurveTween(curve: Curves.ease),
                 ),
-              Container(
-                decoration: ShaderDecoration(fragmentProgram: fp),
-                child: const Text(bigText),
+                weight: 40.0,
               ),
-              const Text(bigText),
-              const Text(bigText),
-              const Text(bigText),
+              TweenSequenceItem<double>(
+                tween: Tween<double>(begin: 1.8, end: 0.7).chain(
+                  CurveTween(curve: Curves.ease),
+                ),
+                weight: 40.0,
+              ),
             ],
+          ),
+          builder: (context, double scale, child) => NoiseGradientPainterWidget(
+            fragmentProgram: noiseGradientProgram,
+            scale: scale,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: ListView(
+                children: [
+                  Text(
+                    'Shaders test',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  const Text(bigText),
+                  const Text(bigText),
+                  const Text(bigText),
+                  const Text(bigText),
+                ],
+              ),
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class AnimatedNoiseGradientPainterWidget extends AnimatedWidget {
+  final Widget child;
+
+  const AnimatedNoiseGradientPainterWidget({
+    super.key,
+    required this.child,
+    required Animation<double> animation,
+  }) : super(listenable: animation);
+
+  @override
+  Widget build(BuildContext context) {
+    final animation = listenable as Animation<double>;
+    return NoiseGradientPainterWidget(
+      fragmentProgram: noiseGradientProgram,
+      scale: animation.value,
+      child: child,
     );
   }
 }
