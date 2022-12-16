@@ -73,7 +73,6 @@ class NoiseGradientPainter extends CustomPainter {
     shader.setFloat(3, offset.dy);
     shader.setFloat(4, scale);
     final paint = Paint()..shader = shader;
-    final start = DateTime.now();
     canvas.drawRect(
       Rect.fromLTWH(
         0,
@@ -83,8 +82,6 @@ class NoiseGradientPainter extends CustomPainter {
       ),
       paint,
     );
-
-    print('re-rendered, time is ${DateTime.now().difference(start).inMicroseconds} microseconds');
   }
 
   @override
