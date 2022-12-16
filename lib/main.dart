@@ -1,9 +1,10 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shader_toy/shaders/noise_gradient_painter.dart';
-import 'package:simple_animations/simple_animations.dart';
+import 'package:shader_toy/time_animation_builder.dart';
 
 part 'main.g.dart';
 
@@ -33,6 +34,23 @@ Nullam gravida tincidunt est quis ultrices. Fusce at posuere tortor, sit amet co
 Vivamus faucibus augue a tristique finibus. In sollicitudin massa sodales sollicitudin porta. Integer at feugiat est. Pellentesque sem mi, varius eget lorem ut, feugiat varius ligula. Morbi sit amet dapibus erat, ut laoreet eros. Nunc pulvinar sem a diam tempus sollicitudin. Curabitur pretium, ex a mattis accumsan, dolor felis accumsan metus, vitae lacinia nibh orci quis erat. Integer ullamcorper orci eu ante fermentum fermentum. Nulla dignissim ipsum in libero euismod, iaculis cursus ipsum interdum. Fusce purus elit, volutpat non risus at, egestas aliquet felis. Morbi elementum interdum orci, a sollicitudin purus consectetur nec. Suspendisse semper risus a nisi congue porta. Aenean sit amet lobortis velit. Maecenas ac tellus purus.
 ''';
 
+final tweenScale = TweenSequence<double>(
+  <TweenSequenceItem<double>>[
+    TweenSequenceItem<double>(
+      tween: Tween<double>(begin: 0.9, end: 1.2).chain(
+        CurveTween(curve: Curves.ease),
+      ),
+      weight: 40.0,
+    ),
+    TweenSequenceItem<double>(
+      tween: Tween<double>(begin: 1.2, end: 0.9).chain(
+        CurveTween(curve: Curves.ease),
+      ),
+      weight: 40.0,
+    ),
+  ],
+);
+
 class FlutterApp extends StatelessWidget {
   const FlutterApp({super.key});
 
@@ -40,43 +58,26 @@ class FlutterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: LoopAnimationBuilder<double>(
-          duration: const Duration(seconds: 2),
-          tween: TweenSequence<double>(
-            <TweenSequenceItem<double>>[
-              TweenSequenceItem<double>(
-                tween: Tween<double>(begin: 0.7, end: 1.8).chain(
-                  CurveTween(curve: Curves.ease),
-                ),
-                weight: 40.0,
-              ),
-              TweenSequenceItem<double>(
-                tween: Tween<double>(begin: 1.8, end: 0.7).chain(
-                  CurveTween(curve: Curves.ease),
-                ),
-                weight: 40.0,
-              ),
-            ],
-          ),
-          builder: (context, double scale, child) => NoiseGradientPainterWidget(
+        body: TimeAnimationBuilder(builder: (context, double time, child) =>
+          NoiseGradientPainterWidget(
             fragmentProgram: noiseGradientProgram,
-            scale: scale,
+            scale: tweenScale.transform(time / 6 % 1.0),
+            offset: Offset(sin(time) * 0.1, time / 3),
             child: Container(
               padding: const EdgeInsets.all(16),
-              child: ListView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     'Shaders test',
+                    textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
-                  const Text(bigText),
-                  const Text(bigText),
-                  const Text(bigText),
-                  const Text(bigText),
                 ],
               ),
             ),
-          ),
+          )
         ),
       ),
     );

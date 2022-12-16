@@ -81,7 +81,7 @@ float noise2D(vec2 uv){ // Smooth
 
 void main()
 {
-    vec2 p = FlutterFragCoord() / iResolution * iScale;
+    vec2 p = ((FlutterFragCoord() / iResolution) - vec2(0.5, 0.5)) * iScale;
 
 	vec2 uv = p*vec2(iResolution.x/iResolution.y,1.0) + iOffset;
 	
@@ -90,7 +90,7 @@ void main()
     
     float f = smoothstep(0.2, 0.8, noise2D(uv));
     
-    float m0 = mod(f, 0.1);
+    float m0 = mod(f, 0.05);
 	
 	fragColor = mix(color1, color2, f-m0);
 }
