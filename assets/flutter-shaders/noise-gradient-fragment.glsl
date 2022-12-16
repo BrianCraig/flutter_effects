@@ -79,18 +79,19 @@ float noise2D(vec2 uv){ // Smooth
     return f;
 }
 
+float nearStep(float x, int steps){
+    return round(x * (steps - 1)) / (steps - 1);
+}
+
 void main()
 {
     vec2 p = ((FlutterFragCoord() / iResolution) - vec2(0.5, 0.5)) * iScale;
 
 	vec2 uv = p*vec2(iResolution.x/iResolution.y,1.0) + iOffset;
-	
     vec4 color1 = vec4(1.0, 0.1, 0.3, 1.0);
     vec4 color2 = vec4(1.0, 1.0, 0.3, 1.0);
     
     float f = smoothstep(0.2, 0.8, noise2D(uv));
-    
-    float m0 = mod(f, 0.05);
 	
-	fragColor = mix(color1, color2, f-m0);
+	fragColor = mix(color1, color2, nearStep(f, 8));
 }
