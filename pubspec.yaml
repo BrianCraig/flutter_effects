@@ -18,7 +18,6 @@ dev_dependencies:
 
 flutter:
   shaders:
-    - assets/flutter-shaders/red-original-lol.glsl
-    - assets/flutter-shaders/noise-gradient-fragment.glsl
+    - assets/flutter-shaders/noise_gradient_fragment.glsl
 
   uses-material-design: true

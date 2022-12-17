@@ -8,6 +8,7 @@ class NoiseGradientPainterWidget extends StatefulWidget {
   final FragmentProgram fragmentProgram;
   final Offset offset;
   final double scale;
+  final int steps;
 
   const NoiseGradientPainterWidget({
     super.key,
@@ -15,7 +16,8 @@ class NoiseGradientPainterWidget extends StatefulWidget {
     required this.fragmentProgram,
     this.offset = Offset.zero,
     this.scale = 1.0,
-  });
+    this.steps = 8,
+  }) : assert (steps >= 2);
 
   @override
   State<NoiseGradientPainterWidget> createState() =>
@@ -39,6 +41,7 @@ class _NoiseGradientPainterWidgetState
         shader: fragmentShader,
         offset: widget.offset,
         scale: widget.scale,
+        steps: widget.steps,
       ),
       child: widget.child,
     );
@@ -55,11 +58,13 @@ class NoiseGradientPainter extends CustomPainter {
   final FragmentShader shader;
   final Offset offset;
   final double scale;
+  final int steps;
 
   NoiseGradientPainter({
     required this.shader,
     required this.offset,
     required this.scale,
+    required this.steps,
   });
 
   @override
@@ -72,6 +77,7 @@ class NoiseGradientPainter extends CustomPainter {
     shader.setFloat(2, offset.dx);
     shader.setFloat(3, offset.dy);
     shader.setFloat(4, scale);
+    shader.setFloat(5, steps.toDouble());
     final paint = Paint()..shader = shader;
     canvas.drawRect(
       Rect.fromLTWH(

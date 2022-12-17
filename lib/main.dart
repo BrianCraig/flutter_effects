@@ -12,10 +12,8 @@ late FragmentProgram noiseGradientProgram;
 
 void main() async {
   now = DateTime.now();
-  fp = await FragmentProgram.fromAsset(
-      'assets/flutter-shaders/red-original-lol.glsl');
   noiseGradientProgram = await FragmentProgram.fromAsset(
-      'assets/flutter-shaders/noise-gradient-fragment.glsl');
+      'assets/flutter-shaders/noise_gradient_fragment.glsl');
   runApp(const FlutterApp());
 }
 
@@ -48,10 +46,12 @@ class FlutterApp extends StatelessWidget {
             fragmentProgram: noiseGradientProgram,
             scale: tweenScale.transform(time / 6 % 1.0),
             offset: Offset(sin(time) * 0.1, time / 3),
+            steps: ((sin(time) + 1) * 6.0 + 2.0).toInt(),
             child: Container(
               padding: const EdgeInsets.all(16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
@@ -59,6 +59,23 @@ class FlutterApp extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
+
+                  Align(
+                    alignment: Alignment.center,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints.tight(
+                        const Size(400, 60)
+                      ),
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        style: const ButtonStyle(),
+                        child: Text(
+                          'See more shaders',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

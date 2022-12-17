@@ -64,4 +64,5 @@ float noise2D(vec2 uv){ // Smooth
 	f += 0.0625 * noise_main( uv ); 
     uv = m*uv;
 	f = 0.5 + 0.5 * f;
+    return f;
 }
