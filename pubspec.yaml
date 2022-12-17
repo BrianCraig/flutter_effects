@@ -19,5 +19,6 @@ dev_dependencies:
 flutter:
   shaders:
     - assets/flutter-shaders/noise_gradient_fragment.glsl
+    - assets/flutter-shaders/truchet_tiling.glsl
 
   uses-material-design: true

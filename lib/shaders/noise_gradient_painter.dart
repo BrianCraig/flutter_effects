@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shader_toy/main.dart';
 
 /// remembers the `FragmentShader` state for this Widget
 class NoiseGradientPainterWidget extends StatefulWidget {
@@ -31,7 +32,7 @@ class _NoiseGradientPainterWidgetState
   @override
   void initState() {
     super.initState();
-    fragmentShader = widget.fragmentProgram.fragmentShader();
+    fragmentShader = debugTimeSync(() => widget.fragmentProgram.fragmentShader(), 'live ng fs');
   }
 
   @override

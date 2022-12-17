@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shader_toy/screens/truchet_tiling_screen.dart';
 import 'package:shader_toy/shaders/noise_gradient_painter.dart';
 import 'package:shader_toy/time_animation_builder.dart';
 
@@ -9,11 +10,34 @@ late DateTime now;
 
 late FragmentProgram fp;
 late FragmentProgram noiseGradientProgram;
+late FragmentProgram truchetTilingProgram;
+
+Future<T> debugTime<T>(Future<T> original, String name) async {
+  final start = DateTime.now();
+  final output = await original;
+  print(
+      '[$name] took ${DateTime.now().difference(start).inMicroseconds.toString()} microseconds');
+  return output;
+}
+
+T debugTimeSync<T>(T Function() original, String name) {
+  final start = DateTime.now();
+  final output = original();
+  print(
+      '[$name] took ${DateTime.now().difference(start).inMicroseconds.toString()} microseconds');
+  return output;
+}
 
 void main() async {
   now = DateTime.now();
-  noiseGradientProgram = await FragmentProgram.fromAsset(
-      'assets/flutter-shaders/noise_gradient_fragment.glsl');
+  noiseGradientProgram = await debugTime(
+      FragmentProgram.fromAsset(
+          'assets/flutter-shaders/noise_gradient_fragment.glsl'),
+      'ng fp');
+  truchetTilingProgram = await debugTime(
+      FragmentProgram.fromAsset('assets/flutter-shaders/truchet_tiling.glsl'),
+      'tt fp');
+
   runApp(const FlutterApp());
 }
 
@@ -59,15 +83,20 @@ class FlutterApp extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
-
                   Align(
                     alignment: Alignment.center,
                     child: ConstrainedBox(
-                      constraints: BoxConstraints.tight(
-                        const Size(400, 60)
-                      ),
+                      constraints: BoxConstraints.tight(const Size(400, 60)),
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () => Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, _, __) =>
+                                const TruchetTillingScreen(),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
+                          ),
+                        ),
                         style: const ButtonStyle(),
                         child: Text(
                           'See more shaders',
