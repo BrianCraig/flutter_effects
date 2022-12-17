@@ -20,5 +20,6 @@ flutter:
   shaders:
     - assets/flutter-shaders/noise_gradient_fragment.glsl
     - assets/flutter-shaders/truchet_tiling.glsl
+    - assets/flutter-shaders/debug.glsl
 
   uses-material-design: true

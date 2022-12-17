@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shader_toy/screens/shader_demo_screen.dart';
 import 'package:shader_toy/screens/truchet_tiling_screen.dart';
 import 'package:shader_toy/shaders/noise_gradient_painter.dart';
 import 'package:shader_toy/time_animation_builder.dart';
@@ -11,6 +12,7 @@ late DateTime now;
 late FragmentProgram fp;
 late FragmentProgram noiseGradientProgram;
 late FragmentProgram truchetTilingProgram;
+late FragmentProgram debugProgram;
 
 Future<T> debugTime<T>(Future<T> original, String name) async {
   final start = DateTime.now();
@@ -31,12 +33,18 @@ T debugTimeSync<T>(T Function() original, String name) {
 void main() async {
   now = DateTime.now();
   noiseGradientProgram = await debugTime(
-      FragmentProgram.fromAsset(
-          'assets/flutter-shaders/noise_gradient_fragment.glsl'),
-      'ng fp');
+    FragmentProgram.fromAsset(
+        'assets/flutter-shaders/noise_gradient_fragment.glsl'),
+    'ng fp',
+  );
   truchetTilingProgram = await debugTime(
-      FragmentProgram.fromAsset('assets/flutter-shaders/truchet_tiling.glsl'),
-      'tt fp');
+    FragmentProgram.fromAsset('assets/flutter-shaders/truchet_tiling.glsl'),
+    'tt fp',
+  );
+  debugProgram = await debugTime(
+    FragmentProgram.fromAsset('assets/flutter-shaders/debug.glsl'),
+    'debug fp',
+  );
 
   runApp(const FlutterApp());
 }
@@ -83,6 +91,7 @@ class FlutterApp extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
+                  const SizedBox(height: 16,),
                   Align(
                     alignment: Alignment.center,
                     child: ConstrainedBox(
@@ -104,7 +113,31 @@ class FlutterApp extends StatelessWidget {
                         ),
                       ),
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 16,),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints.tight(const Size(400, 60)),
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, _, __) => ShaderDemoScreen(
+                              fragmentProgram: debugProgram,
+                            ),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
+                          ),
+                        ),
+                        style: const ButtonStyle(),
+                        child: Text(
+                          'See Debug shader',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
