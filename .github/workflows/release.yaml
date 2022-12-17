@@ -26,6 +26,8 @@ jobs:
           build: flutter config --enable-windows-desktop && flutter create --platforms=windows . && flutter build windows
           output: /windows/runner/Release
     runs-on: ${{ matrix.config.runs_on }}
+    env:
+      rootpath: ${{env.GITHUB_WORKSPACE}}/
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -38,7 +40,7 @@ jobs:
         uses: thedoctor0/zip-release@0.6.2
         with:
           type: zip
-          filename: ${{env.GITHUB_WORKSPACE}}/${{ matrix.config.name }}.zip
+          filename: ${{env.rootpath}}${{ matrix.config.name }}.zip
           directory: ./build${{ matrix.config.output }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
