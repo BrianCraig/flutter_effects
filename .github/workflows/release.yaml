@@ -39,7 +39,7 @@ jobs:
         with:
           type: zip
           filename: ${{ matrix.config.name }}.zip
-          path: ./build${{ matrix.config.output }}
+          directory: ./build${{ matrix.config.output }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
