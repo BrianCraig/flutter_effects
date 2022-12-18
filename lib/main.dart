@@ -6,10 +6,6 @@ import 'package:shader_toy/screens/shader_demo_screen.dart';
 import 'package:shader_toy/screens/truchet_tiling_screen.dart';
 import 'package:shader_toy/shader_library.dart';
 
-late DateTime now;
-
-late FragmentProgram debugProgram;
-
 Future<T> debugTime<T>(Future<T> original, String name) async {
   final start = DateTime.now();
   final output = await original;
@@ -27,12 +23,6 @@ T debugTimeSync<T>(T Function() original, String name) {
 }
 
 void main() async {
-  now = DateTime.now();
-  debugProgram = await debugTime(
-    FragmentProgram.fromAsset('assets/flutter-shaders/debug.glsl'),
-    'debug fp',
-  );
-
   runApp(const FlutterApp());
 }
 
