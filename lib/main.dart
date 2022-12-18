@@ -4,14 +4,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shader_toy/screens/shader_demo_screen.dart';
 import 'package:shader_toy/screens/truchet_tiling_screen.dart';
-import 'package:shader_toy/shaders/noise_gradient_painter.dart';
-import 'package:shader_toy/time_animation_builder.dart';
+import 'package:shader_toy/shader_library.dart';
 
 late DateTime now;
 
-late FragmentProgram fp;
-late FragmentProgram noiseGradientProgram;
-late FragmentProgram truchetTilingProgram;
 late FragmentProgram debugProgram;
 
 Future<T> debugTime<T>(Future<T> original, String name) async {
@@ -32,21 +28,23 @@ T debugTimeSync<T>(T Function() original, String name) {
 
 void main() async {
   now = DateTime.now();
-  noiseGradientProgram = await debugTime(
-    FragmentProgram.fromAsset(
-        'assets/flutter-shaders/noise_gradient_fragment.glsl'),
-    'ng fp',
-  );
-  truchetTilingProgram = await debugTime(
-    FragmentProgram.fromAsset('assets/flutter-shaders/truchet_tiling.glsl'),
-    'tt fp',
-  );
   debugProgram = await debugTime(
     FragmentProgram.fromAsset('assets/flutter-shaders/debug.glsl'),
     'debug fp',
   );
 
   runApp(const FlutterApp());
+}
+
+class _NoiseGradientUniforms extends CustomUniforms {
+  final int steps;
+
+  const _NoiseGradientUniforms({this.steps = 10});
+
+  @override
+  void setUniforms(int baseIndex, FragmentShader shader) {
+    shader.setFloat(baseIndex, steps.toDouble());
+  }
 }
 
 final tweenScale = TweenSequence<double>(
@@ -71,99 +69,88 @@ class FlutterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Widget container = Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Shaders test',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          const _MyButtonWidget(
+            route: TruchetTillingScreen(),
+            text: 'See Truchet tiling',
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          const _MyButtonWidget(
+            route: ShaderDemoScreen(),
+            text: 'See Debug demo',
+          ),
+        ],
+      ),
+    );
     return MaterialApp(
       home: Scaffold(
-        body: TimeAnimationBuilder(
-          builder: (context, double time, child) => NoiseGradientPainterWidget(
-            fragmentProgram: noiseGradientProgram,
-            scale: tweenScale.transform(time / 6 % 1.0),
-            offset: Offset(sin(time) * 0.1, time / 3),
-            steps: ((sin(time) + 1) * 6.0 + 2.0).toInt(),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Shaders test',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  const SizedBox(height: 16,),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints.tight(const Size(400, 60)),
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, _, __) =>
-                                const TruchetTillingScreen(),
-                            transitionDuration: Duration.zero,
-                            reverseTransitionDuration: Duration.zero,
-                          ),
-                        ),
-                        style: const ButtonStyle(),
-                        child: Text(
-                          'See more shaders',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16,),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints.tight(const Size(400, 60)),
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, _, __) => ShaderDemoScreen(
-                              fragmentProgram: debugProgram,
-                            ),
-                            transitionDuration: Duration.zero,
-                            reverseTransitionDuration: Duration.zero,
-                          ),
-                        ),
-                        style: const ButtonStyle(),
-                        child: Text(
-                          'See Debug shader',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+        body: FragmentProgramBuilder(
+          future: FragmentProgram.fromAsset(
+              'assets/flutter-shaders/noise_gradient_fragment.glsl'),
+          builder: (BuildContext context, FragmentProgram fragmentProgram) =>
+              FragmentShaderPaint(
+            fragmentProgram: fragmentProgram,
+            uniforms: (BuildContext context, double time) => FragmentUniforms(
+              transformation: Matrix4.identity()
+                ..translate(sin(time) * 0.1, time / 3)
+                ..scale(tweenScale.transform(time / 6 % 1.0)),
+              time: time,
+              custom: _NoiseGradientUniforms(
+                steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
               ),
             ),
+            child: container,
           ),
+          child: container,
         ),
       ),
     );
   }
 }
 
-class AnimatedNoiseGradientPainterWidget extends AnimatedWidget {
-  final Widget child;
-
-  const AnimatedNoiseGradientPainterWidget({
-    super.key,
-    required this.child,
-    required Animation<double> animation,
-  }) : super(listenable: animation);
+class _MyButtonWidget extends StatelessWidget {
+  final Widget route;
+  final String text;
+  const _MyButtonWidget({required this.route, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    final animation = listenable as Animation<double>;
-    return NoiseGradientPainterWidget(
-      fragmentProgram: noiseGradientProgram,
-      scale: animation.value,
-      child: child,
+    return Align(
+      alignment: Alignment.center,
+      child: ConstrainedBox(
+        constraints: BoxConstraints.tight(const Size(400, 60)),
+        child: OutlinedButton(
+          onPressed: () => Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, _, __) => route,
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+            ),
+          ),
+          style: const ButtonStyle(),
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ),
+      ),
     );
   }
 }

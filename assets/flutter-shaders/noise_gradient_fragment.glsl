@@ -10,18 +10,18 @@ precision highp float;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(location = 0) uniform vec2 iResolution;
-layout(location = 1) uniform vec2 iOffset;
-layout(location = 2) uniform float iScale;
+layout(location = 0) uniform vec2 i_resolution;
+layout(location = 1) uniform mat4 i_transformation;
+layout(location = 2) uniform float i_time;
 
 
 layout(location = 3) uniform float i_steps;
 
 void main()
 {
-    vec2 p = ((FlutterFragCoord() / iResolution) - vec2(0.5, 0.5)) * iScale;
+    vec2 mainuv = (FlutterFragCoord() / i_resolution) * vec2(i_resolution.x/i_resolution.y,1.0) - vec2(0.5, 0.5);
+    vec2 uv = (vec4(mainuv.x, mainuv.y, 0.0, 1.0) * i_transformation).xy;
 
-	vec2 uv = p*vec2(iResolution.x/iResolution.y,1.0) + iOffset;
     vec4 color1 = vec4(1.0, 0.1, 0.3, 1.0);
     vec4 color2 = vec4(1.0, 1.0, 0.3, 1.0);
     
