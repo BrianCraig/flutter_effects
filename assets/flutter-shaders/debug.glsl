@@ -13,7 +13,7 @@ layout(location = 2) uniform float i_time;
 
 void main()
 {
-    vec2 uv = FlutterFragCoord() / i_resolution;
+    vec2 uv = FlutterFragCoord() / i_resolution - 0.5;
 
     uv = (vec4(uv.x, uv.y, 0.0, 1.0) * i_transformation).xy;
     

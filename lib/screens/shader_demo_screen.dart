@@ -21,10 +21,9 @@ class ShaderDemoScreen extends StatelessWidget {
           fragmentProgram: fragmentProgram,
           time: time,
           transformation: Matrix4.identity()
-            ..scale(10.0)
+            ..scale(2.0)
             ..translate(cos(time)*.2, time*.1, 0)
-            ..rotateZ(sin(time)*.05)
-            ..rotateY(1.1),
+            ..rotateZ(sin(time)*.05),
           child: Container(
             padding: const EdgeInsets.all(16),
             child: Column(
