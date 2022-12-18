@@ -23,7 +23,7 @@ layout(location = 5) uniform vec4 i_color_1;
 
 void main()
 {
-    vec2 mainuv = (FlutterFragCoord() / i_resolution) * vec2(i_resolution.x/i_resolution.y,1.0) - vec2(0.5, 0.5);
+    vec2 mainuv = ((FlutterFragCoord() / i_resolution) - vec2(0.5, 0.5)) * vec2(i_resolution.x/i_resolution.y,1.0) ;
     vec2 uv = (vec4(mainuv.x, mainuv.y, 0.0, 1.0) * i_transformation).xy;
 
     float f = smoothstep(0.2, 0.8, noise2D(uv));

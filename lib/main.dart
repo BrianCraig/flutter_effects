@@ -106,8 +106,8 @@ class FlutterApp extends StatelessWidget {
             fragmentProgram: fragmentProgram,
             uniforms: (BuildContext context, double time) => FragmentUniforms(
               transformation: Matrix4.identity()
-                ..translate(sin(time) * 0.1, time / 3)
-                ..scale(tweenScale.transform(time / 6 % 1.0) * 3),
+                ..translate(sin(time) * 1, time)
+                ..scale((cos(time) + 4)),
               time: time,
               custom: _NoiseGradientUniforms(
                 steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
