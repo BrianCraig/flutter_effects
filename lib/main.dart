@@ -28,12 +28,20 @@ void main() async {
 
 class _NoiseGradientUniforms extends CustomUniforms {
   final int steps;
+  final Color firstColor;
+  final Color secondColor;
 
-  const _NoiseGradientUniforms({this.steps = 10});
+  const _NoiseGradientUniforms({
+    this.steps = 10,
+    required this.firstColor,
+    required this.secondColor,
+  });
 
   @override
   void setUniforms(int baseIndex, FragmentShader shader) {
     shader.setFloat(baseIndex, steps.toDouble());
+    shader.setHSLColor(baseIndex + 1, HSLColor.fromColor(firstColor));
+    shader.setHSLColor(baseIndex + 5, HSLColor.fromColor(secondColor));
   }
 }
 
@@ -99,10 +107,12 @@ class FlutterApp extends StatelessWidget {
             uniforms: (BuildContext context, double time) => FragmentUniforms(
               transformation: Matrix4.identity()
                 ..translate(sin(time) * 0.1, time / 3)
-                ..scale(tweenScale.transform(time / 6 % 1.0)),
+                ..scale(tweenScale.transform(time / 6 % 1.0) * 3),
               time: time,
               custom: _NoiseGradientUniforms(
                 steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
+                firstColor: const Color.fromRGBO(206, 13, 13, 1.0),
+                secondColor: const Color.fromRGBO(12, 169, 12, 1.0),
               ),
             ),
             child: container,

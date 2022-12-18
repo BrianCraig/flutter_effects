@@ -194,6 +194,15 @@ extension ShaderSetter on FragmentShader {
     setFloat(index + 2, value.blue / 255);
     setFloat(index + 3, value.opacity);
   }
+
+  /// Sets the vec4 uniform at [index] to HSLA [value].
+  /// It takes 4 float spaces.
+  void setHSLColor(int index, HSLColor value) {
+    setFloat(index, value.hue / 360);
+    setFloat(index + 1, value.saturation);
+    setFloat(index + 2, value.lightness);
+    setFloat(index + 3, value.alpha);
+  }
 }
 
 class MyCustomUniforms extends CustomUniforms {
