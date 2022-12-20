@@ -54,8 +54,8 @@ class NoiseTypesScreen extends StatelessWidget {
           fragmentProgram: fragmentProgram,
           uniforms: (BuildContext context, double time) => FragmentUniforms(
             transformation: Matrix4.identity()
-            ..scale(10.0),
-            time: time,
+            ..scale(1.8),
+            time: time * 0.5,
           ),
           child: container,
         ),
