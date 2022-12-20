@@ -66,3 +66,45 @@ float noise2D(vec2 uv){ // Smooth
 	f = 0.5 + 0.5 * f;
     return f;
 }
+
+vec3 hash( vec3 p ) // replace this by something better
+{
+	p = vec3( dot(p,vec3(127.1,311.7, 74.7)),
+			  dot(p,vec3(269.5,183.3,246.1)),
+			  dot(p,vec3(113.5,271.9,124.6)));
+
+	return -1.0 + 2.0*fract(sin(p)*43758.5453123);
+}
+
+const mat3 m3 = mat3( 0.00,  0.80,  0.60,
+                    -0.80,  0.36, -0.48,
+                    -0.60, -0.48,  0.64 );
+
+
+float noise( in vec3 p )
+{
+    vec3 i = floor( p );
+    vec3 f = fract( p );
+	
+	vec3 u = f*f*(3.0-2.0*f);
+
+    float n = mix( mix( mix( dot( hash( i + vec3(0.0,0.0,0.0) ), f - vec3(0.0,0.0,0.0) ), 
+                          dot( hash( i + vec3(1.0,0.0,0.0) ), f - vec3(1.0,0.0,0.0) ), u.x),
+                     mix( dot( hash( i + vec3(0.0,1.0,0.0) ), f - vec3(0.0,1.0,0.0) ), 
+                          dot( hash( i + vec3(1.0,1.0,0.0) ), f - vec3(1.0,1.0,0.0) ), u.x), u.y),
+                mix( mix( dot( hash( i + vec3(0.0,0.0,1.0) ), f - vec3(0.0,0.0,1.0) ), 
+                          dot( hash( i + vec3(1.0,0.0,1.0) ), f - vec3(1.0,0.0,1.0) ), u.x),
+                     mix( dot( hash( i + vec3(0.0,1.0,1.0) ), f - vec3(0.0,1.0,1.0) ), 
+                          dot( hash( i + vec3(1.0,1.0,1.0) ), f - vec3(1.0,1.0,1.0) ), u.x), u.y), u.z );
+
+    return smoothstep( -0.7, 0.7, n );
+}
+
+float noise_smooth(vec3 q)
+{
+float f  = 0.5000*noise( q ); q = m3*q*2.01;
+            f += 0.2500*noise( q ); q = m3*q*2.02;
+            f += 0.1250*noise( q ); q = m3*q*2.03;
+            f += 0.0625*noise( q ); q = m3*q*2.01;
+return f;
+}

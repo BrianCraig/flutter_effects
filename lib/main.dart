@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shader_toy/screens/noise_types_screen.dart';
 import 'package:shader_toy/screens/shader_demo_screen.dart';
 import 'package:shader_toy/screens/truchet_tiling_screen.dart';
 import 'package:shader_toy/shader_library.dart';
@@ -105,6 +106,13 @@ class FlutterApp extends StatelessWidget {
           const _MyButtonWidget(
             route: ShaderDemoScreen(),
             text: 'See Debug demo',
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          const _MyButtonWidget(
+            route: NoiseTypesScreen(),
+            text: 'Noise types',
           ),
         ],
       ),
