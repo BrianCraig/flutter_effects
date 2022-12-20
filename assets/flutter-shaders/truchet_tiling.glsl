@@ -64,14 +64,15 @@ vec2 tile(vec2 fpos, vec2 ipos, float k) {
     return vec2(s, s2);
 }
 
-vec3 layer(vec2 uv, float sc) {
-    float k = sc / i_resolution.y;
+vec3 layer(vec2 uv) {
+    
+    float k = 1 / i_resolution.y;
 
     uv += 1.5 * k * vec2(.25, .75) * i_time;
     
     // Split into grid
-    vec2 ipos = floor(sc * uv);
-    vec2 fpos = fract(sc * uv);
+    vec2 ipos = floor(uv);
+    vec2 fpos = fract(uv);
        
     // Split into grid of big and small tiles
     float m = mod(2. * ipos.x - ipos.y, 5.);    
@@ -103,13 +104,15 @@ void main()
 {
     vec2 uv = (FlutterFragCoord()-.5*i_resolution.xy)/i_resolution.y;
     
+    uv = (vec4(uv.x, uv.y, 0.0, 1.0) * i_transformation).xy;
+
     // Layers
-    float sc = 40.;
-    vec3   s = layer(uv, sc);
-    vec3  s2 = layer(uv + vec2(.432/sc), sc);
+    float sc = 1.;
+    vec3   s = layer(uv);
+    vec3  s2 = layer(uv + vec2(.432));
 
     vec3 col = .75 + .25 * cos(2. * pi * 
-               (.65 * s.y + .05 * uv.x + vec3(0,1,2)/6.));
+               (.65 * s.y + .005 * uv.x + vec3(0,1,2)/6.));
     
     // Dots
     col -= .1 * s.y * (1. - s.z) + .02 * s2.x;

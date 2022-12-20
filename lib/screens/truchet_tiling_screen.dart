@@ -51,7 +51,9 @@ class TruchetTillingScreen extends StatelessWidget {
             FragmentShaderPaint(
           fragmentProgram: fragmentProgram,
           uniforms: (BuildContext context, double time) => FragmentUniforms(
-            transformation: Matrix4.identity(),
+            transformation: Matrix4.identity()
+            ..scale(40.0)
+            ..translate(time*.1, time*.1),
             time: time,
           ),
           child: child,
