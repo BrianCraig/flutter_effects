@@ -43,6 +43,19 @@ class _NoiseGradientUniforms extends CustomUniforms {
     shader.setHSLColor(baseIndex + 1, HSLColor.fromColor(firstColor));
     shader.setHSLColor(baseIndex + 5, HSLColor.fromColor(secondColor));
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _NoiseGradientUniforms &&
+          runtimeType == other.runtimeType &&
+          steps == other.steps &&
+          firstColor == other.firstColor &&
+          secondColor == other.secondColor;
+
+  @override
+  int get hashCode =>
+      steps.hashCode ^ firstColor.hashCode ^ secondColor.hashCode;
 }
 
 final tweenScale = TweenSequence<double>(

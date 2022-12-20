@@ -7,6 +7,10 @@ import 'package:flutter/widgets.dart';
 /// FragmentProgram loader Widget,
 /// similar to [FutureBuilder].
 ///
+/// This Widget, like [FutureBuilder]
+/// Can't know on the first frame is the 
+/// Future is resolved, so it shows the child 
+/// for at least one frame, 
 /// If you don't want any loading/compiling frame
 /// to be shown, load the [FragmentProgram] in an upper context
 /// and use directly the [FragmentShaderPaint].
@@ -30,7 +34,7 @@ class FragmentProgramBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<FragmentProgram>(
       future: future,
-      builder: (context, AsyncSnapshot snapshot) {
+      builder: (context, AsyncSnapshot<FragmentProgram> snapshot) {
         if (snapshot.hasData) {
           return builder(context, snapshot.data!);
         }
@@ -70,6 +74,18 @@ class FragmentUniforms {
     required this.time,
     this.custom = const EmptyCustomUniforms(),
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FragmentUniforms &&
+          runtimeType == other.runtimeType &&
+          transformation == other.transformation &&
+          time == other.time &&
+          custom == other.custom;
+
+  @override
+  int get hashCode => transformation.hashCode ^ time.hashCode ^ custom.hashCode;
 }
 
 class FragmentShaderPaint extends StatefulWidget {
@@ -155,8 +171,18 @@ class _FragmentShaderPainter extends CustomPainter {
   }
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _FragmentShaderPainter &&
+          shader == other.shader &&
+          uniforms == other.uniforms;
+
+  @override
+  int get hashCode => shader.hashCode ^ uniforms.hashCode;
+
+  @override
   bool shouldRepaint(_FragmentShaderPainter oldDelegate) {
-    return true; // TODO: make tests for performance
+    return this != oldDelegate;
   }
 }
 
