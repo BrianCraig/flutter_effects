@@ -1,6 +1,7 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shader_toy/main.dart';
 import 'package:shader_toy/shader_library.dart';
 
 class NoiseTypesScreen extends StatelessWidget {
@@ -46,18 +47,12 @@ class NoiseTypesScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      body: FragmentProgramBuilder(
-        future: FragmentProgram.fromAsset(
-            'assets/flutter-shaders/noise_types_fragment.glsl'),
-        builder: (BuildContext context, FragmentProgram fragmentProgram) =>
-            FragmentShaderPaint(
-          fragmentProgram: fragmentProgram,
-          uniforms: (BuildContext context, double time) => FragmentUniforms(
-            transformation: Matrix4.identity()
-            ..scale(1.8),
-            time: time * 0.5,
-          ),
-          child: container,
+      body: FragmentShaderPaint(
+        fragmentProgram:
+            context.watch<FragmentMap>()[FragmentSamples.noiseTypes]!,
+        uniforms: (BuildContext context, double time) => FragmentUniforms(
+          transformation: Matrix4.identity()..scale(1.8),
+          time: time * 0.5,
         ),
         child: container,
       ),

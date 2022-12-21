@@ -2,29 +2,63 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shader_toy/screens/infinite_scroll_circles.dart';
 import 'package:shader_toy/screens/noise_types_screen.dart';
 import 'package:shader_toy/screens/shader_demo_screen.dart';
 import 'package:shader_toy/screens/truchet_tiling_screen.dart';
 import 'package:shader_toy/shader_library.dart';
 
-Future<T> debugTime<T>(Future<T> original, String name) async {
-  final start = DateTime.now();
-  final output = await original;
-  print(
-      '[$name] took ${DateTime.now().difference(start).inMicroseconds.toString()} microseconds');
-  return output;
-}
-
-T debugTimeSync<T>(T Function() original, String name) {
-  final start = DateTime.now();
-  final output = original();
-  print(
-      '[$name] took ${DateTime.now().difference(start).inMicroseconds.toString()} microseconds');
-  return output;
-}
-
 void main() async {
   runApp(const FlutterApp());
+}
+
+typedef FragmentMap = Map<FragmentSamples, FragmentProgram>;
+
+enum FragmentSamples {
+  noiseGradient,
+  truchetTiling,
+  debug,
+  noiseTypes;
+}
+
+Future<FragmentMap> getFragmentPrograms() async {
+  final uris = [
+    "assets/flutter-shaders/noise_gradient_fragment.glsl",
+    "assets/flutter-shaders/truchet_tiling.glsl",
+    "assets/flutter-shaders/debug.glsl",
+    "assets/flutter-shaders/noise_types_fragment.glsl",
+  ];
+  final result = await Future.wait(uris.map((uri) => FragmentProgram.fromAsset(uri)));
+  return {
+    FragmentSamples.noiseGradient: result[0],
+    FragmentSamples.truchetTiling: result[1],
+    FragmentSamples.debug: result[2],
+    FragmentSamples.noiseTypes: result[3],
+  };
+}
+
+class FlutterApp extends StatelessWidget {
+  const FlutterApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: FutureBuilder<FragmentMap>(
+          future: getFragmentPrograms(),
+          builder: (builder, snapshot) {
+          if (snapshot.hasData) {
+            return Provider.value(
+              value: snapshot.data!,
+              child: const FlutterContent(),
+            );
+          }
+          return const Text('Compiling Fragment Shaders...');
+        }),
+      ),
+    );
+  }
 }
 
 class _NoiseGradientUniforms extends CustomUniforms {
@@ -76,8 +110,8 @@ final tweenScale = TweenSequence<double>(
   ],
 );
 
-class FlutterApp extends StatelessWidget {
-  const FlutterApp({super.key});
+class FlutterContent extends StatelessWidget {
+  const FlutterContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -114,17 +148,20 @@ class FlutterApp extends StatelessWidget {
             route: NoiseTypesScreen(),
             text: 'Noise types',
           ),
+          const SizedBox(
+            height: 16,
+          ),
+          const _MyButtonWidget(
+            route: InfiniteScrollCirclesScreen(),
+            text: 'Scroll Circles',
+          ),
         ],
       ),
     );
     return MaterialApp(
       home: Scaffold(
-        body: FragmentProgramBuilder(
-          future: FragmentProgram.fromAsset(
-              'assets/flutter-shaders/noise_gradient_fragment.glsl'),
-          builder: (BuildContext context, FragmentProgram fragmentProgram) =>
-              FragmentShaderPaint(
-            fragmentProgram: fragmentProgram,
+        body: FragmentShaderPaint(
+            fragmentProgram: context.watch<FragmentMap>()[FragmentSamples.noiseGradient]!,
             uniforms: (BuildContext context, double time) => FragmentUniforms(
               transformation: Matrix4.identity()
                 ..translate(sin(time) * 1, time)
@@ -138,8 +175,6 @@ class FlutterApp extends StatelessWidget {
             ),
             child: container,
           ),
-          child: container,
-        ),
       ),
     );
   }

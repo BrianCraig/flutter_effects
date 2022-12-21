@@ -1,7 +1,8 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shader_toy/main.dart';
 import 'package:shader_toy/shader_library.dart';
 
 class ShaderDemoScreen extends StatelessWidget {
@@ -47,20 +48,14 @@ class ShaderDemoScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      body: FragmentProgramBuilder(
-        future: FragmentProgram.fromAsset(
-            'assets/flutter-shaders/debug.glsl'),
-        builder: (BuildContext context, FragmentProgram fragmentProgram) =>
-            FragmentShaderPaint(
-          fragmentProgram: fragmentProgram,
-          uniforms: (BuildContext context, double time) => FragmentUniforms(
-            transformation: Matrix4.identity()
-              ..scale(2.0)
-              ..translate(cos(time) * .2, time * .1, 0)
-              ..rotateZ(sin(time) * .05),
-            time: time,
-          ),
-          child: container,
+      body: FragmentShaderPaint(
+        fragmentProgram: context.watch<FragmentMap>()[FragmentSamples.debug]!,
+        uniforms: (BuildContext context, double time) => FragmentUniforms(
+          transformation: Matrix4.identity()
+            ..scale(2.0)
+            ..translate(cos(time) * .2, time * .1, 0)
+            ..rotateZ(sin(time) * .05),
+          time: time,
         ),
         child: container,
       ),

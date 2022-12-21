@@ -1,6 +1,7 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shader_toy/main.dart';
 import 'package:shader_toy/shader_library.dart';
 
 class TruchetTillingScreen extends StatelessWidget {
@@ -44,19 +45,14 @@ class TruchetTillingScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      body: FragmentProgramBuilder(
-        future: FragmentProgram.fromAsset(
-            'assets/flutter-shaders/truchet_tiling.glsl'),
-        builder: (BuildContext context, FragmentProgram fragmentProgram) =>
-            FragmentShaderPaint(
-          fragmentProgram: fragmentProgram,
-          uniforms: (BuildContext context, double time) => FragmentUniforms(
-            transformation: Matrix4.identity()
+      body: FragmentShaderPaint(
+        fragmentProgram:
+            context.watch<FragmentMap>()[FragmentSamples.truchetTiling]!,
+        uniforms: (BuildContext context, double time) => FragmentUniforms(
+          transformation: Matrix4.identity()
             ..scale(40.0)
-            ..translate(time*.1, time*.1),
-            time: time,
-          ),
-          child: child,
+            ..translate(time * .1, time * .1),
+          time: time,
         ),
         child: child,
       ),
