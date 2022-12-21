@@ -24,10 +24,10 @@ enum FragmentSamples {
 
 Future<FragmentMap> getFragmentPrograms() async {
   final uris = [
-    "assets/flutter-shaders/noise_gradient_fragment.glsl",
-    "assets/flutter-shaders/truchet_tiling.glsl",
-    "assets/flutter-shaders/debug.glsl",
-    "assets/flutter-shaders/noise_types_fragment.glsl",
+    "assets/shaders/noise_gradient.glsl",
+    "assets/shaders/truchet_tiling.glsl",
+    "assets/shaders/debug.glsl",
+    "assets/shaders/noise_types.glsl",
   ];
   final result = await Future.wait(uris.map((uri) => FragmentProgram.fromAsset(uri)));
   return {
