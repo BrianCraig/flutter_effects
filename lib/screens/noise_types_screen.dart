@@ -50,7 +50,7 @@ class NoiseTypesScreen extends StatelessWidget {
       body: FragmentShaderPaint(
         fragmentProgram:
             context.watch<FragmentMap>()[FragmentSamples.noiseTypes]!,
-        uniforms: (BuildContext context, double time) => FragmentUniforms(
+        uniforms: (double time) => FragmentUniforms(
           transformation: Matrix4.identity()..scale(1.8),
           time: time * 0.5,
         ),

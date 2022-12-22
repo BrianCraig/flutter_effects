@@ -25,7 +25,7 @@ FragmentProgramBuilder(
   builder: (BuildContext context, FragmentProgram fragmentProgram) =>
       FragmentShaderPaint(
     fragmentProgram: fragmentProgram,
-    uniforms: (BuildContext context, double time) => FragmentUniforms(
+    uniforms: (double time) => FragmentUniforms(
       transformation: Matrix4.identity(),
       time: time,
       custom: const MyCustomUniforms(

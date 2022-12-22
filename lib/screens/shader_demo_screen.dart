@@ -50,7 +50,7 @@ class ShaderDemoScreen extends StatelessWidget {
     return Scaffold(
       body: FragmentShaderPaint(
         fragmentProgram: context.watch<FragmentMap>()[FragmentSamples.debug]!,
-        uniforms: (BuildContext context, double time) => FragmentUniforms(
+        uniforms: (double time) => FragmentUniforms(
           transformation: Matrix4.identity()
             ..scale(2.0)
             ..translate(cos(time) * .2, time * .1, 0)

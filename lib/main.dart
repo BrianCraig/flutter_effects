@@ -19,7 +19,8 @@ enum FragmentSamples {
   noiseGradient,
   truchetTiling,
   debug,
-  noiseTypes;
+  noiseTypes,
+  scatteredSemicircles;
 }
 
 Future<FragmentMap> getFragmentPrograms() async {
@@ -28,6 +29,7 @@ Future<FragmentMap> getFragmentPrograms() async {
     "assets/shaders/truchet_tiling.glsl",
     "assets/shaders/debug.glsl",
     "assets/shaders/noise_types.glsl",
+    "assets/shaders/scattered_semicircles.glsl",
   ];
   final result = await Future.wait(uris.map((uri) => FragmentProgram.fromAsset(uri)));
   return {
@@ -35,6 +37,7 @@ Future<FragmentMap> getFragmentPrograms() async {
     FragmentSamples.truchetTiling: result[1],
     FragmentSamples.debug: result[2],
     FragmentSamples.noiseTypes: result[3],
+    FragmentSamples.scatteredSemicircles: result[4],
   };
 }
 
@@ -162,7 +165,7 @@ class FlutterContent extends StatelessWidget {
       home: Scaffold(
         body: FragmentShaderPaint(
             fragmentProgram: context.watch<FragmentMap>()[FragmentSamples.noiseGradient]!,
-            uniforms: (BuildContext context, double time) => FragmentUniforms(
+            uniforms: (double time) => FragmentUniforms(
               transformation: Matrix4.identity()
                 ..translate(sin(time) * 1, time)
                 ..scale((cos(time) + 4)),

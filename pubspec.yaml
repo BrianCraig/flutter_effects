@@ -24,5 +24,6 @@ flutter:
     - assets/shaders/truchet_tiling.glsl
     - assets/shaders/debug.glsl
     - assets/shaders/noise_types.glsl
+    - assets/shaders/scattered_semicircles.glsl
 
   uses-material-design: true

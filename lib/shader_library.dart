@@ -8,9 +8,9 @@ import 'package:flutter/widgets.dart';
 /// similar to [FutureBuilder].
 ///
 /// This Widget, like [FutureBuilder]
-/// Can't know on the first frame is the 
-/// Future is resolved, so it shows the child 
-/// for at least one frame, 
+/// Can't know on the first frame is the
+/// Future is resolved, so it shows the child
+/// for at least one frame,
 /// If you don't want any loading/compiling frame
 /// to be shown, load the [FragmentProgram] in an upper context
 /// and use directly the [FragmentShaderPaint].
@@ -90,7 +90,7 @@ class FragmentUniforms {
 
 class FragmentShaderPaint extends StatefulWidget {
   final FragmentProgram fragmentProgram;
-  final FragmentUniforms Function(BuildContext context, double time) uniforms;
+  final FragmentUniforms Function(double time) uniforms;
   final Widget child;
 
   const FragmentShaderPaint({
@@ -109,16 +109,29 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
   late final Ticker ticker;
   late DateTime start;
   late FragmentShader shader;
+  late FragmentUniforms uniforms;
 
   @override
   void initState() {
     super.initState();
     start = DateTime.now();
     ticker = createTicker((_) {
-      setState(() {});
+      final newUniforms = generateUniforms();
+      // we don't want to re-rendeer if uniforms are the same
+      if (newUniforms != uniforms) {
+        setState(() {
+          uniforms = newUniforms;
+        });
+      }
     });
     ticker.start();
     shader = widget.fragmentProgram.fragmentShader();
+    uniforms = generateUniforms();
+  }
+
+  FragmentUniforms generateUniforms() {
+    return widget.uniforms(
+        DateTime.now().difference(start).inMicroseconds.toDouble() / 1e6);
   }
 
   @override
@@ -132,8 +145,7 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
     return CustomPaint(
       painter: _FragmentShaderPainter(
         shader: shader,
-        uniforms: widget.uniforms(context,
-            DateTime.now().difference(start).inMicroseconds.toDouble() / 1e6),
+        uniforms: uniforms,
       ),
       child: widget.child,
     );
@@ -263,7 +275,7 @@ class Example extends StatelessWidget {
       builder: (BuildContext context, FragmentProgram fragmentProgram) =>
           FragmentShaderPaint(
         fragmentProgram: fragmentProgram,
-        uniforms: (BuildContext context, double time) => FragmentUniforms(
+        uniforms: (double time) => FragmentUniforms(
           transformation: Matrix4.identity(),
           time: time,
           custom: const MyCustomUniforms(
