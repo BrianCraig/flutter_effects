@@ -31,7 +31,8 @@ Future<FragmentMap> getFragmentPrograms() async {
     "assets/shaders/noise_types.glsl",
     "assets/shaders/scattered_semicircles.glsl",
   ];
-  final result = await Future.wait(uris.map((uri) => FragmentProgram.fromAsset(uri)));
+  final result =
+      await Future.wait(uris.map((uri) => FragmentProgram.fromAsset(uri)));
   return {
     FragmentSamples.noiseGradient: result[0],
     FragmentSamples.truchetTiling: result[1],
@@ -49,16 +50,16 @@ class FlutterApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: FutureBuilder<FragmentMap>(
-          future: getFragmentPrograms(),
-          builder: (builder, snapshot) {
-          if (snapshot.hasData) {
-            return Provider.value(
-              value: snapshot.data!,
-              child: const FlutterContent(),
-            );
-          }
-          return const Text('Compiling Fragment Shaders...');
-        }),
+            future: getFragmentPrograms(),
+            builder: (builder, snapshot) {
+              if (snapshot.hasData) {
+                return Provider.value(
+                  value: snapshot.data!,
+                  child: const FlutterContent(),
+                );
+              }
+              return const Text('Compiling Fragment Shaders...');
+            }),
       ),
     );
   }
@@ -96,29 +97,97 @@ class _NoiseGradientUniforms extends CustomUniforms {
       steps.hashCode ^ firstColor.hashCode ^ secondColor.hashCode;
 }
 
-final tweenScale = TweenSequence<double>(
-  <TweenSequenceItem<double>>[
-    TweenSequenceItem<double>(
-      tween: Tween<double>(begin: 0.9, end: 1.2).chain(
-        CurveTween(curve: Curves.ease),
-      ),
-      weight: 40.0,
+CustomRenderer _myRenderer = (Canvas canvas, Paint paint, Size size) {
+  // paint.blendMode = BlendMode.values[size.width.toInt() % BlendMode.values.length];
+  // print(BlendMode.values[size.width.toInt() % BlendMode.values.length]);
+
+
+  paint.blendMode = BlendMode.exclusion;
+  canvas.drawRect(
+    Rect.fromLTWH(
+      0,
+      0,
+      size.width,
+      size.height,
     ),
-    TweenSequenceItem<double>(
-      tween: Tween<double>(begin: 1.2, end: 0.9).chain(
-        CurveTween(curve: Curves.ease),
-      ),
-      weight: 40.0,
-    ),
-  ],
-);
+    paint,
+  );
+};
 
 class FlutterContent extends StatelessWidget {
   const FlutterContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final Widget container = Container(
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: const Color.fromRGBO(255, 255, 255, 1.0),
+        body: Stack(
+          children: [
+            const HomeMenu(),
+            IgnorePointer(
+              child: FragmentShaderPaint(
+                fragmentProgram: context
+                    .watch<FragmentMap>()[FragmentSamples.noiseGradient]!,
+                uniforms: (double time) => FragmentUniforms(
+                  transformation: Matrix4.identity()
+                    ..translate(sin(time) * 1, time)
+                    ..scale((cos(time) + 4)),
+                  time: time,
+                  custom: _NoiseGradientUniforms(
+                    steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
+                    firstColor: const Color.fromRGBO(206, 13, 13, 1.0),
+                    secondColor: const Color.fromRGBO(12, 169, 12, 1.0),
+                  ),
+                ),
+                customRenderer: _myRenderer,
+                child: const SizedBox.expand(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class WrappedShaderChristmas extends StatelessWidget {
+  final Widget child;
+
+  const WrappedShaderChristmas({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FragmentShaderPaint(
+      fragmentProgram:
+          context.watch<FragmentMap>()[FragmentSamples.noiseGradient]!,
+      uniforms: (double time) => FragmentUniforms(
+        transformation: Matrix4.identity()
+          ..translate(sin(time) * 1, time)
+          ..scale((cos(time) + 4)),
+        time: time,
+        custom: _NoiseGradientUniforms(
+          steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
+          firstColor: const Color.fromRGBO(206, 13, 13, 1.0),
+          secondColor: const Color.fromRGBO(12, 169, 12, 1.0),
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
+class HomeMenu extends StatelessWidget {
+  const HomeMenu({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -128,7 +197,13 @@ class FlutterContent extends StatelessWidget {
           Text(
             'Shaders test',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.displaySmall,
+            style: Theme.of(context).textTheme.displaySmall!.merge(
+                  const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+
+                  ),
+                ),
           ),
           const SizedBox(
             height: 16,
@@ -161,25 +236,6 @@ class FlutterContent extends StatelessWidget {
         ],
       ),
     );
-    return MaterialApp(
-      home: Scaffold(
-        body: FragmentShaderPaint(
-            fragmentProgram: context.watch<FragmentMap>()[FragmentSamples.noiseGradient]!,
-            uniforms: (double time) => FragmentUniforms(
-              transformation: Matrix4.identity()
-                ..translate(sin(time) * 1, time)
-                ..scale((cos(time) + 4)),
-              time: time,
-              custom: _NoiseGradientUniforms(
-                steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
-                firstColor: const Color.fromRGBO(206, 13, 13, 1.0),
-                secondColor: const Color.fromRGBO(12, 169, 12, 1.0),
-              ),
-            ),
-            child: container,
-          ),
-      ),
-    );
   }
 }
 
@@ -203,10 +259,26 @@ class _MyButtonWidget extends StatelessWidget {
               reverseTransitionDuration: Duration.zero,
             ),
           ),
-          style: const ButtonStyle(),
+          style: const ButtonStyle(
+            surfaceTintColor: MaterialStatePropertyAll(Colors.black),
+            shadowColor: MaterialStatePropertyAll(Colors.black),
+            side: MaterialStatePropertyAll(
+                BorderSide(color: Colors.black, width: 4)),
+            shape: MaterialStatePropertyAll(
+              RoundedRectangleBorder(
+                side: BorderSide.none,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+          ),
           child: Text(
             text,
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(context).textTheme.headlineSmall!.merge(
+                  const TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w900),
+                ),
           ),
         ),
       ),
