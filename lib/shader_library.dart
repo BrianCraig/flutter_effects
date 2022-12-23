@@ -1,5 +1,5 @@
-import 'dart:math' show pi;
-import 'dart:ui' show FragmentProgram, FragmentShader;
+import 'dart:ui'
+    show FragmentProgram, FragmentShader, ParagraphBuilder, ParagraphStyle;
 
 import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:flutter/widgets.dart';
@@ -88,9 +88,12 @@ class FragmentUniforms {
   int get hashCode => transformation.hashCode ^ time.hashCode ^ custom.hashCode;
 }
 
+typedef CustomRenderer = void Function(Canvas canvas, Paint paint, Size size);
+
 class FragmentShaderPaint extends StatefulWidget {
   final FragmentProgram fragmentProgram;
   final FragmentUniforms Function(double time) uniforms;
+  final CustomRenderer? customRenderer;
   final Widget child;
 
   const FragmentShaderPaint({
@@ -98,6 +101,7 @@ class FragmentShaderPaint extends StatefulWidget {
     required this.fragmentProgram,
     required this.uniforms,
     required this.child,
+    this.customRenderer,
   });
 
   @override
@@ -146,6 +150,7 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
       painter: _FragmentShaderPainter(
         shader: shader,
         uniforms: uniforms,
+        customRenderer: widget.customRenderer,
       ),
       child: widget.child,
     );
@@ -155,8 +160,10 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
 class _FragmentShaderPainter extends CustomPainter {
   final FragmentShader shader;
   final FragmentUniforms uniforms;
+  final CustomRenderer? customRenderer;
 
-  _FragmentShaderPainter({required this.shader, required this.uniforms});
+  _FragmentShaderPainter(
+      {required this.shader, required this.uniforms, this.customRenderer});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -171,15 +178,19 @@ class _FragmentShaderPainter extends CustomPainter {
     uniforms.custom.setUniforms(19, shader);
 
     final paint = Paint()..shader = shader;
-    canvas.drawRect(
-      Rect.fromLTWH(
-        0,
-        0,
-        size.width,
-        size.height,
-      ),
-      paint,
-    );
+    if (customRenderer != null) {
+      customRenderer!(canvas, paint, size);
+    } else {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          0,
+          0,
+          size.width,
+          size.height,
+        ),
+        paint,
+      );
+    }
   }
 
   @override
@@ -258,35 +269,5 @@ class MyCustomUniforms extends CustomUniforms {
     shader.setRGBColor(baseIndex, firstColor);
     shader.setRGBColor(baseIndex + 3, secondColor);
     shader.setFloat(baseIndex + 6, angle);
-  }
-}
-
-class Example extends StatelessWidget {
-  final Widget myChild;
-  const Example({
-    super.key,
-    required this.myChild,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FragmentProgramBuilder(
-      future: FragmentProgram.fromAsset('assets/my_shader.glsl'),
-      builder: (BuildContext context, FragmentProgram fragmentProgram) =>
-          FragmentShaderPaint(
-        fragmentProgram: fragmentProgram,
-        uniforms: (double time) => FragmentUniforms(
-          transformation: Matrix4.identity(),
-          time: time,
-          custom: const MyCustomUniforms(
-            firstColor: Color.fromRGBO(255, 0, 0, 1.0),
-            secondColor: Color.fromRGBO(0, 0, 255, 1.0),
-            angle: pi / 2,
-          ),
-        ),
-        child: myChild,
-      ),
-      child: myChild,
-    );
   }
 }
