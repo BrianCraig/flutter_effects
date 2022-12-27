@@ -39,3 +39,13 @@ FragmentProgramBuilder(
   child: myChild,
 )
 ~~~
+
+
+
+------ 
+(black background)
+
+ · flutter_effects · flutter_effects · (infinite left to right with shader blend, ShaderMask????)
+
+
+------

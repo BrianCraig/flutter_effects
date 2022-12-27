@@ -25,5 +25,6 @@ flutter:
     - assets/shaders/debug.glsl
     - assets/shaders/noise_types.glsl
     - assets/shaders/scattered_semicircles.glsl
+    - assets/shaders/noise/random_pure.frag
 
   uses-material-design: true

@@ -90,9 +90,11 @@ class FragmentUniforms {
 
 typedef CustomRenderer = void Function(Canvas canvas, Paint paint, Size size);
 
+typedef FragmentShaderPaintCallback = FragmentUniforms Function(double time);
+
 class FragmentShaderPaint extends StatefulWidget {
   final FragmentProgram fragmentProgram;
-  final FragmentUniforms Function(double time) uniforms;
+  final FragmentShaderPaintCallback uniforms;
   final CustomRenderer? customRenderer;
   final Widget child;
 
@@ -112,6 +114,7 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
     with SingleTickerProviderStateMixin {
   late final Ticker ticker;
   late DateTime start;
+  /// TODO on change, dispose and regenerate shader.
   late FragmentShader shader;
   late FragmentUniforms uniforms;
 
@@ -146,14 +149,14 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
+    return RepaintBoundary(child: CustomPaint(
       painter: _FragmentShaderPainter(
         shader: shader,
         uniforms: uniforms,
         customRenderer: widget.customRenderer,
       ),
       child: widget.child,
-    );
+    ),);
   }
 }
 
