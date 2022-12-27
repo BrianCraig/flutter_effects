@@ -1,5 +1,4 @@
-import 'dart:ui'
-    show FragmentProgram, FragmentShader, ParagraphBuilder, ParagraphStyle;
+import 'dart:ui' show FragmentProgram, FragmentShader;
 
 import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:flutter/widgets.dart';
@@ -114,6 +113,7 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
     with SingleTickerProviderStateMixin {
   late final Ticker ticker;
   late DateTime start;
+
   /// TODO on change, dispose and regenerate shader.
   late FragmentShader shader;
   late FragmentUniforms uniforms;
@@ -149,14 +149,16 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(child: CustomPaint(
-      painter: _FragmentShaderPainter(
-        shader: shader,
-        uniforms: uniforms,
-        customRenderer: widget.customRenderer,
+    return RepaintBoundary(
+      child: CustomPaint(
+        painter: _FragmentShaderPainter(
+          shader: shader,
+          uniforms: uniforms,
+          customRenderer: widget.customRenderer,
+        ),
+        child: widget.child,
       ),
-      child: widget.child,
-    ),);
+    );
   }
 }
 

@@ -86,7 +86,7 @@ CustomRenderer _myRenderer = (Canvas canvas, Paint paint, Size size) {
   );
 };
 
-const WELCOME_TEXT = '''
+const welcomeText = '''
 Hi developers!
 
 Are you tired of the same old boring backgrounds in your Flutter apps? Do you want to add some flair and excitement to your user interface? Look no further! Our Flutter background effects package has got you covered.
@@ -139,7 +139,7 @@ class WelcomeTopSectionContent extends StatelessWidget {
                 const Size.fromWidth(480),
               ),
               child: Text(
-                WELCOME_TEXT,
+                welcomeText,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
