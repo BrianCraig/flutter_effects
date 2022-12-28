@@ -6,10 +6,11 @@ precision highp float;
 
 #include <../functions/standard_uniforms.glsl>
 
+#include <../functions/transform2d_uniforms.glsl>
+
 #include <../functions/random.glsl>
 
-#include <../functions/standard_uv.glsl>
 void main() {
-    vec2 uv = floor(uv_transofrmed_conserve_x()*8.0);
+    vec2 uv = floor((FlutterFragCoord() + i_translate) / (8.0 * i_dpr));
     fragColor = vec4(random3(uv), 1.0);
 }

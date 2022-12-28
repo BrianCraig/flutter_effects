@@ -1,13 +1,6 @@
-import 'dart:math';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shader_toy/model/fragment_samples.dart';
-import 'package:shader_toy/screens/infinite_scroll_circles.dart';
-import 'package:shader_toy/screens/noise_types_screen.dart';
-import 'package:shader_toy/screens/shader_demo_screen.dart';
-import 'package:shader_toy/screens/truchet_tiling_screen.dart';
 import 'package:shader_toy/shader_library.dart';
 import 'package:shader_toy/widgets/show_shader_demo.dart';
 
@@ -38,13 +31,13 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
+/*
 class _NoiseGradientUniforms extends CustomUniforms {
   final int steps;
   final Color firstColor;
   final Color secondColor;
 
   const _NoiseGradientUniforms({
-    this.steps = 10,
     required this.firstColor,
     required this.secondColor,
   });
@@ -69,6 +62,7 @@ class _NoiseGradientUniforms extends CustomUniforms {
   int get hashCode =>
       steps.hashCode ^ firstColor.hashCode ^ secondColor.hashCode;
 }
+*/
 
 CustomRenderer _myRenderer = (Canvas canvas, Paint paint, Size size) {
   // paint.blendMode = BlendMode.values[size.width.toInt() % BlendMode.values.length];
@@ -198,12 +192,14 @@ class WelcomeTextContent extends StatelessWidget {
   }
 }
 
+/*
 class WelcomeMenuOLD extends StatelessWidget {
   const WelcomeMenuOLD({super.key});
 
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
+    const time = 0.0;
     return Stack(
       fit: StackFit.loose,
       // TODO check why expand crashes, or use another thing
@@ -220,17 +216,18 @@ class WelcomeMenuOLD extends StatelessWidget {
           child: FragmentShaderPaint(
             fragmentProgram:
                 context.watch<FragmentMap>()[FragmentSamples.noiseGradient]!,
-            uniforms: (double time) => FragmentUniforms(
-              transformation: Matrix4.identity()
-                ..translate(sin(time) * 1, time)
-                ..scale((cos(time) + 4)),
-              time: time,
-              custom: _NoiseGradientUniforms(
+            uniforms: [
+              TransformUniforms(
+                  matrix: Matrix4.identity()
+                    ..translate(sin(time) * 1, time)
+                    ..scale((cos(time) + 4))),
+              const TimeUniforms(value: time),
+              _NoiseGradientUniforms(
                 steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
                 firstColor: const Color.fromRGBO(206, 13, 13, 1.0),
                 secondColor: const Color.fromRGBO(12, 169, 12, 1.0),
               ),
-            ),
+            ],
             customRenderer: _myRenderer,
             child: const SizedBox(
               height: 16,
@@ -242,6 +239,7 @@ class WelcomeMenuOLD extends StatelessWidget {
     );
   }
 }
+*/
 
 extension ListFiller<T> on List<T> {
   List<T> fillBetween(T element) {
@@ -297,20 +295,23 @@ class FlutterContent extends StatelessWidget {
               ShowShaderDemo(
                 title: 'White Noise',
                 sample: FragmentSamples.whiteNoise,
-                uniforms: (matrix) => (time) => FragmentUniforms(
-                    transformation: matrix, time: 0),
+                uniforms: (transform) => [
+                  Transform2DUniform(transform: transform),
+                ],
               ),
               ShowShaderDemo(
                 title: 'Colored White Noise',
                 sample: FragmentSamples.whiteNoiseColor,
-                uniforms: (matrix) => (time) => FragmentUniforms(
-                    transformation: matrix, time: 0),
+                uniforms: (transform) => [
+                  Transform2DUniform(transform: transform),
+                ],
               ),
               ShowShaderDemo(
                 title: 'Colored White Noise, 8px cell',
                 sample: FragmentSamples.whiteNoiseColorCell,
-                uniforms: (matrix) => (time) => FragmentUniforms(
-                    transformation: matrix, time: 0),
+                uniforms: (transform) => [
+                  Transform2DUniform(transform: transform),
+                ],
               ),
             ],
           ),
@@ -320,35 +321,7 @@ class FlutterContent extends StatelessWidget {
   }
 }
 
-class WrappedShaderChristmas extends StatelessWidget {
-  final Widget child;
-
-  const WrappedShaderChristmas({
-    super.key,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FragmentShaderPaint(
-      fragmentProgram:
-          context.watch<FragmentMap>()[FragmentSamples.noiseGradient]!,
-      uniforms: (double time) => FragmentUniforms(
-        transformation: Matrix4.identity()
-          ..translate(sin(time) * 1, time)
-          ..scale((cos(time) + 4)),
-        time: time,
-        custom: _NoiseGradientUniforms(
-          steps: ((sin(time) + 1) * 6.0 + 2.0).round(),
-          firstColor: const Color.fromRGBO(206, 13, 13, 1.0),
-          secondColor: const Color.fromRGBO(12, 169, 12, 1.0),
-        ),
-      ),
-      child: child,
-    );
-  }
-}
-
+/*
 class HomeMenu extends StatelessWidget {
   const HomeMenu({
     super.key,
@@ -452,3 +425,5 @@ class _MyButtonWidget extends StatelessWidget {
     );
   }
 }
+
+*/

@@ -6,10 +6,12 @@ precision highp float;
 
 #include <../functions/standard_uniforms.glsl>
 
+#include <../functions/transform2d_uniforms.glsl>
+
 #include <../functions/random.glsl>
 
 void main() {
     // we could use transformed uv, since this is noise we're gonna coord as input (no matrix transformation)
     // vec2 uv = uv_transofrmed_conserve_x();
-    fragColor = vec4(random3(FlutterFragCoord()), 1.0);
+    fragColor = vec4(random3(FlutterFragCoord() + i_translate), 1.0);
 }

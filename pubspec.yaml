@@ -20,11 +20,11 @@ dev_dependencies:
 
 flutter:
   shaders:
-    - assets/shaders/noise_gradient.glsl
-    - assets/shaders/truchet_tiling.glsl
-    - assets/shaders/debug.glsl
-    - assets/shaders/noise_types.glsl
-    - assets/shaders/scattered_semicircles.glsl
+    #- assets/shaders/noise_gradient.glsl
+    #- assets/shaders/truchet_tiling.glsl
+    #- assets/shaders/debug.glsl
+    #- assets/shaders/noise_types.glsl
+    #- assets/shaders/scattered_semicircles.glsl
     - assets/shaders/noise/white_noise.frag
     - assets/shaders/noise/white_noise_color.frag
     - assets/shaders/noise/white_noise_color_cell.frag

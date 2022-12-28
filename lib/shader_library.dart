@@ -1,59 +1,14 @@
 import 'dart:ui' show FragmentProgram, FragmentShader;
 
-import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:flutter/widgets.dart';
-
-/// FragmentProgram loader Widget,
-/// similar to [FutureBuilder].
-///
-/// This Widget, like [FutureBuilder]
-/// Can't know on the first frame is the
-/// Future is resolved, so it shows the child
-/// for at least one frame,
-/// If you don't want any loading/compiling frame
-/// to be shown, load the [FragmentProgram] in an upper context
-/// and use directly the [FragmentShaderPaint].
-class FragmentProgramBuilder extends StatelessWidget {
-  /// future loader, example: `FragmentProgram.fromAsset('assets/my_shader.glsl')`
-  final Future<FragmentProgram> future;
-
-  /// default Widget shown while compiling/loading/waiting for [FragmentProgram]
-  final Widget child;
-  final Widget Function(BuildContext context, FragmentProgram fragmentProgram)
-      builder;
-
-  const FragmentProgramBuilder({
-    super.key,
-    required this.future,
-    required this.builder,
-    this.child = const SizedBox(),
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<FragmentProgram>(
-      future: future,
-      builder: (context, AsyncSnapshot<FragmentProgram> snapshot) {
-        if (snapshot.hasData) {
-          return builder(context, snapshot.data!);
-        }
-        if (snapshot.hasError) {
-          // TODO: implement error stategy
-          return Text(
-            snapshot.error.toString(),
-            textDirection: TextDirection.ltr,
-          );
-        }
-        return child;
-      },
-    );
-  }
-}
+import 'package:shader_toy/model/transform_2d.dart';
 
 abstract class CustomUniforms {
   const CustomUniforms();
 
   void setUniforms(int baseIndex, FragmentShader shader);
+
+  int get size;
 }
 
 class EmptyCustomUniforms extends CustomUniforms {
@@ -61,39 +16,90 @@ class EmptyCustomUniforms extends CustomUniforms {
 
   @override
   void setUniforms(int baseIndex, FragmentShader shader) {}
+
+  @override
+  get size => 0;
 }
 
-class FragmentUniforms {
-  final Matrix4 transformation;
-  final double time;
-  final CustomUniforms custom;
+class FloatUniforms extends CustomUniforms {
+  final double value;
+  const FloatUniforms({this.value = 0.0});
 
-  const FragmentUniforms({
-    required this.transformation,
-    required this.time,
-    this.custom = const EmptyCustomUniforms(),
-  });
+  @override
+  void setUniforms(int baseIndex, FragmentShader shader) {
+    shader.setFloat(baseIndex, value);
+  }
+
+  @override
+  int get size => 1;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FragmentUniforms &&
+      other is FloatUniforms &&
           runtimeType == other.runtimeType &&
-          transformation == other.transformation &&
-          time == other.time &&
-          custom == other.custom;
+          value == other.value;
 
   @override
-  int get hashCode => transformation.hashCode ^ time.hashCode ^ custom.hashCode;
+  int get hashCode => value.hashCode;
+}
+
+typedef TimeUniforms = FloatUniforms;
+
+class TransformUniforms extends CustomUniforms {
+  final Matrix4 matrix;
+  const TransformUniforms({required this.matrix});
+
+  @override
+  void setUniforms(int baseIndex, FragmentShader shader) {
+    shader.setM4(baseIndex, matrix);
+  }
+
+  @override
+  int get size => 16;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TransformUniforms &&
+          runtimeType == other.runtimeType &&
+          matrix == other.matrix;
+
+  @override
+  int get hashCode => matrix.hashCode;
+}
+
+class Transform2DUniform extends CustomUniforms {
+  final Transform2D transform;
+  const Transform2DUniform({
+    this.transform = const Transform2D()});
+
+  @override
+  void setUniforms(int baseIndex, FragmentShader shader) {
+    shader.setOffset(baseIndex, transform.translation);
+    shader.setFloat(baseIndex + 2, transform.rotation);
+    shader.setFloat(baseIndex + 3, transform.scale);
+  }
+
+  @override
+  int get size => 4;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Transform2DUniform &&
+          runtimeType == other.runtimeType &&
+          transform == other.transform ;
+
+  @override
+  int get hashCode => transform.hashCode;
 }
 
 typedef CustomRenderer = void Function(Canvas canvas, Paint paint, Size size);
 
-typedef FragmentShaderPaintCallback = FragmentUniforms Function(double time);
-
 class FragmentShaderPaint extends StatefulWidget {
   final FragmentProgram fragmentProgram;
-  final FragmentShaderPaintCallback uniforms;
+  final List<CustomUniforms> uniforms;
   final CustomRenderer? customRenderer;
   final Widget child;
 
@@ -109,41 +115,22 @@ class FragmentShaderPaint extends StatefulWidget {
   State<FragmentShaderPaint> createState() => _FragmentShaderPaintState();
 }
 
-class _FragmentShaderPaintState extends State<FragmentShaderPaint>
-    with SingleTickerProviderStateMixin {
-  late final Ticker ticker;
+class _FragmentShaderPaintState extends State<FragmentShaderPaint> {
   late DateTime start;
 
   /// TODO on change, dispose and regenerate shader.
   late FragmentShader shader;
-  late FragmentUniforms uniforms;
 
   @override
   void initState() {
     super.initState();
     start = DateTime.now();
-    ticker = createTicker((_) {
-      final newUniforms = generateUniforms();
-      // we don't want to re-rendeer if uniforms are the same
-      if (newUniforms != uniforms) {
-        setState(() {
-          uniforms = newUniforms;
-        });
-      }
-    });
-    ticker.start();
     shader = widget.fragmentProgram.fragmentShader();
-    uniforms = generateUniforms();
-  }
-
-  FragmentUniforms generateUniforms() {
-    return widget.uniforms(
-        DateTime.now().difference(start).inMicroseconds.toDouble() / 1e6);
   }
 
   @override
   void dispose() {
-    ticker.dispose();
+    shader.dispose();
     super.dispose();
   }
 
@@ -153,7 +140,8 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
       child: CustomPaint(
         painter: _FragmentShaderPainter(
           shader: shader,
-          uniforms: uniforms,
+          uniforms: widget.uniforms,
+          devicePixelRatio: MediaQuery.maybeDevicePixelRatioOf(context) ?? 1.0,
           customRenderer: widget.customRenderer,
         ),
         child: widget.child,
@@ -164,23 +152,29 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint>
 
 class _FragmentShaderPainter extends CustomPainter {
   final FragmentShader shader;
-  final FragmentUniforms uniforms;
+  final List<CustomUniforms> uniforms;
+  final double devicePixelRatio;
   final CustomRenderer? customRenderer;
 
-  _FragmentShaderPainter(
-      {required this.shader, required this.uniforms, this.customRenderer});
+  _FragmentShaderPainter({
+    required this.shader,
+    required this.uniforms,
+    required this.devicePixelRatio,
+    this.customRenderer,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     // layout(location = 0) uniform vec2 i_resolution;
     shader.setSize(0, size);
-    // layout(location = 1) uniform mat4 i_offset;
-    shader.setM4(2, uniforms.transformation);
-    // layout(location = 2) uniform float i_time;
-    shader.setFloat(18, uniforms.time);
+    // layout(location = 1) uniform vec2 i_dpr;
+    shader.setFloat(2, devicePixelRatio);
 
-    // custom uniforms
-    uniforms.custom.setUniforms(19, shader);
+    var index = 3;
+    for (final uniform in uniforms) {
+      uniform.setUniforms(index, shader);
+      index += uniform.size;
+    }
 
     final paint = Paint()..shader = shader;
     if (customRenderer != null) {
@@ -227,6 +221,13 @@ extension ShaderSetter on FragmentShader {
 
   /// Sets the vec2 uniform at [index] to Size [value].
   /// It takes 2 float spaces.
+  void setOffset(int index, Offset value) {
+    setFloat(index, value.dx);
+    setFloat(index + 1, value.dy);
+  }
+
+  /// Sets the vec2 uniform at [index] to Size [value].
+  /// It takes 2 float spaces.
   void setSize(int index, Size value) {
     setFloat(index, value.width);
     setFloat(index + 1, value.height);
@@ -256,23 +257,5 @@ extension ShaderSetter on FragmentShader {
     setFloat(index + 1, value.saturation);
     setFloat(index + 2, value.lightness);
     setFloat(index + 3, value.alpha);
-  }
-}
-
-class MyCustomUniforms extends CustomUniforms {
-  final Color firstColor;
-  final Color secondColor;
-  final double angle;
-  const MyCustomUniforms({
-    required this.firstColor,
-    required this.secondColor,
-    required this.angle,
-  });
-
-  @override
-  void setUniforms(int baseIndex, FragmentShader shader) {
-    shader.setRGBColor(baseIndex, firstColor);
-    shader.setRGBColor(baseIndex + 3, secondColor);
-    shader.setFloat(baseIndex + 6, angle);
   }
 }
