@@ -8,7 +8,8 @@ enum FragmentSamples {
   debug("assets/shaders/debug.glsl"),
   noiseTypes("assets/shaders/noise_types.glsl"),
   scatteredSemicircles("assets/shaders/scattered_semicircles.glsl"),
-  noiseRandomPure("assets/shaders/noise/random_pure.frag");
+  whiteNoise("assets/shaders/noise/white_noise.frag"),
+  whiteNoiseColor("assets/shaders/noise/white_noise_color.frag");
 
   final String uri;
 

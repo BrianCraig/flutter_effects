@@ -295,20 +295,20 @@ class FlutterContent extends StatelessWidget {
           ShaderDemoList(
             children: [
               ShowShaderDemo(
-                title: 'Pure Random Noise',
-                sample: FragmentSamples.noiseRandomPure,
+                title: 'White Noise',
+                sample: FragmentSamples.whiteNoise,
+                uniforms: (time) => FragmentUniforms(
+                    transformation: Matrix4.identity(), time: 0),
+              ),
+              ShowShaderDemo(
+                title: 'Colored White Noise',
+                sample: FragmentSamples.whiteNoiseColor,
                 uniforms: (time) => FragmentUniforms(
                     transformation: Matrix4.identity(), time: 0),
               ),
               ShowShaderDemo(
                 title: 'Pure Random Noise',
-                sample: FragmentSamples.noiseRandomPure,
-                uniforms: (time) => FragmentUniforms(
-                    transformation: Matrix4.identity(), time: 0),
-              ),
-              ShowShaderDemo(
-                title: 'Pure Random Noise',
-                sample: FragmentSamples.noiseRandomPure,
+                sample: FragmentSamples.whiteNoise,
                 uniforms: (time) => FragmentUniforms(
                     transformation: Matrix4.identity(), time: 0),
               ),
