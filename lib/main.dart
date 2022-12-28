@@ -307,8 +307,8 @@ class FlutterContent extends StatelessWidget {
                     transformation: Matrix4.identity(), time: 0),
               ),
               ShowShaderDemo(
-                title: 'Pure Random Noise',
-                sample: FragmentSamples.whiteNoise,
+                title: 'Colored White Noise, 8px cell',
+                sample: FragmentSamples.whiteNoiseColorCell,
                 uniforms: (time) => FragmentUniforms(
                     transformation: Matrix4.identity(), time: 0),
               ),
