@@ -10,7 +10,9 @@ enum FragmentSamples {
   //scatteredSemicircles("assets/shaders/scattered_semicircles.glsl"),
   whiteNoise("assets/shaders/noise/white_noise.frag"),
   whiteNoiseColor("assets/shaders/noise/white_noise_color.frag"),
-  whiteNoiseColorCell("assets/shaders/noise/white_noise_color_cell.frag");
+  whiteNoiseColorCell("assets/shaders/noise/white_noise_color_cell.frag"),
+  voronoi("assets/shaders/voronoi/voronoi.frag"),
+  voronoiTime("assets/shaders/voronoi/voronoi_time.frag");
 
   final String uri;
 

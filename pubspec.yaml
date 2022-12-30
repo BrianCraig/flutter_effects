@@ -28,5 +28,7 @@ flutter:
     - assets/shaders/noise/white_noise.frag
     - assets/shaders/noise/white_noise_color.frag
     - assets/shaders/noise/white_noise_color_cell.frag
+    - assets/shaders/voronoi/voronoi.frag
+    - assets/shaders/voronoi/voronoi_time.frag
 
   uses-material-design: true

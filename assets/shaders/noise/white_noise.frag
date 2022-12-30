@@ -11,8 +11,7 @@ precision highp float;
 #include <../functions/random.glsl>
 
 void main() {
-    // we could use transformed uv, since this is noise we're gonna coord as input (no matrix transformation)
-    // vec2 uv = uv_transofrmed_conserve_x();
-    float r = random(FlutterFragCoord() + i_translation);
+    // we transform the position, even when it's pure noise
+    float r = random(uv_transform2d());
     fragColor = vec4(r, r, r, 1.0);
 }

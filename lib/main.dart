@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shader_toy/model/fragment_samples.dart';
 import 'package:shader_toy/shader_library.dart';
 import 'package:shader_toy/widgets/show_shader_demo.dart';
+import 'package:shader_toy/widgets/time_builder.dart';
 
 void main() async {
   runApp(const FlutterApp());
@@ -313,6 +314,30 @@ class FlutterContent extends StatelessWidget {
                 uniforms: (transform) => [
                   Transform2DUniform(transform: transform),
                 ],
+              ),
+            ],
+          ),
+          const WelcomeText(
+            text: 'And some Voronoi samples.',
+          ),
+          ShaderDemoList(
+            children: [
+              ShowShaderDemo(
+                title: 'Voronoi',
+                sample: FragmentSamples.voronoi,
+                uniforms: (transform) => [
+                  Transform2DUniform(transform: transform),
+                ],
+              ),
+              DurationBuilder(
+                builder: (_, duration) => ShowShaderDemo(
+                  title: 'Time based Voronoi',
+                  sample: FragmentSamples.voronoiTime,
+                  uniforms: (transform) => [
+                    Transform2DUniform(transform: transform),
+                    TimeUniforms(value: duration.inSecondsDecimal)
+                  ],
+                ),
               ),
             ],
           ),

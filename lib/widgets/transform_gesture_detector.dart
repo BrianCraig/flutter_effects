@@ -7,7 +7,8 @@ Offset rotate(Offset original, double rotation) {
   double s = sin(rotation);
   double c = cos(rotation);
 
-  return Offset(original.dx * c - original.dy * s,  original.dx * s + original.dy * c);
+  return Offset(
+      original.dx * c - original.dy * s, original.dx * s + original.dy * c);
 }
 
 class Transform2DGesture extends StatefulWidget {
@@ -29,18 +30,36 @@ class _Transform2DGestureState extends State<Transform2DGesture> {
   double totalScale = 1.0;
   double totalRotation = 0.0;
 
+  void onDrag(DragUpdateDetails details) {
+    setState(() {
+      final actualScale = totalScale * currentScale;
+      final actualRotation = totalRotation + currentRotation;
+
+      translation += rotate(-details.delta, actualRotation) * actualScale;
+
+      transform2d = Transform2D(
+        translation: translation,
+        scale: actualScale,
+        rotation: actualRotation,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onVerticalDragUpdate: onDrag,
       onScaleUpdate: (details) => {
         setState(() {
-          currentScale = 1/details.scale;
+          currentScale = 1 / details.scale;
           currentRotation = -details.rotation;
 
           final actualScale = totalScale * currentScale;
           final actualRotation = totalRotation + currentRotation;
 
-          translation += rotate(-details.focalPointDelta, actualRotation) * actualScale;
+          translation +=
+              rotate(-details.focalPointDelta, actualRotation) * actualScale;
 
           transform2d = Transform2D(
             translation: translation,
@@ -53,6 +72,8 @@ class _Transform2DGestureState extends State<Transform2DGesture> {
         setState(() {
           totalScale *= currentScale;
           totalRotation += currentRotation;
+          currentScale = 1.0;
+          currentRotation = 0;
         })
       },
       child: widget.builder(context, transform2d),
