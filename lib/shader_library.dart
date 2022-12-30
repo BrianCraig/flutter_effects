@@ -259,3 +259,7 @@ extension ShaderSetter on FragmentShader {
     setFloat(index + 3, value.alpha);
   }
 }
+
+extension DurationDouble on Duration {
+  double get inSecondsDecimal => inMicroseconds / Duration.microsecondsPerSecond;
+}
