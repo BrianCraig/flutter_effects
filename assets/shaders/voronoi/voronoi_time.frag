@@ -14,6 +14,6 @@ precision highp float;
 
 void main() {
     vec2 uv = uv_transform2d();
-    vec3 vor = voronoi3d(vec3(uv, i_time) / 16.0);
+    vec3 vor = voronoi3d(vec3(uv / 16.0, i_time));
     fragColor = vec4(vor.x, vor.x, vor.x, 1.0);
 }
