@@ -184,7 +184,8 @@ class WelcomeTextContent extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.displaySmall,
+            style: Theme.of(context).textTheme.headlineMedium,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),

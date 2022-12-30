@@ -13,5 +13,5 @@ precision highp float;
 void main() {
     // we could use transformed uv, since this is noise we're gonna coord as input (no matrix transformation)
     // vec2 uv = uv_transofrmed_conserve_x();
-    fragColor = vec4(random3(FlutterFragCoord() + i_translate), 1.0);
+    fragColor = vec4(random3(FlutterFragCoord() + i_translation), 1.0);
 }

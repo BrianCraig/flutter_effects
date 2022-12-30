@@ -31,12 +31,26 @@ class ShowShaderDemo extends StatelessWidget {
         ),
         Transform2DGesture(
           builder: (context, transform) => FragmentShaderPaint(
-            fragmentProgram:
-                context.watch<FragmentMap>()[sample]!,
+            fragmentProgram: context.watch<FragmentMap>()[sample]!,
             uniforms: uniforms(transform),
-            child: const SizedBox(
+            child: SizedBox(
               height: 320,
               width: 480,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  color: const Color.fromRGBO(255, 255, 255, 0.8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Translation: ${transform.translation}'),
+                      Text('Scale: ${transform.scale}'),
+                      Text('Rotation: ${transform.rotation}'),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ),
