@@ -30,5 +30,8 @@ flutter:
     - assets/shaders/noise/white_noise_color_cell.frag
     - assets/shaders/voronoi/voronoi.frag
     - assets/shaders/voronoi/voronoi_time.frag
+    - assets/shaders/noise/gradient/2d/nearest.frag
+    - assets/shaders/noise/gradient/2d/straight_simple.frag
+    - assets/shaders/noise/gradient/2d/straight_dot.frag
 
   uses-material-design: true

@@ -67,7 +67,7 @@ float noise2D(vec2 uv){ // Smooth
     return f;
 }
 
-vec3 hash( vec3 p ) // replace this by something better
+vec3 hash( vec3 p )
 {
 	p = vec3( dot(p,vec3(127.1,311.7, 74.7)),
 			  dot(p,vec3(269.5,183.3,246.1)),
@@ -81,31 +81,20 @@ const mat3 m3 = mat3( 0.00,  0.80,  0.60,
                     -0.60, -0.48,  0.64 );
 
 
-float cubicInterpolate(float a, float b, float c, float d, float t)
-{
-    float p = (d - c) - (a - b);
-    float q = (a - b) - p;
-    float r = c - a;
-    float s = b;
-
-    return p * t * t * t + q * t * t + r * t + s;
-}
-
+// This basically uses hash to make a smoothened noise interpolation
 float noise( in vec3 p )
 {
     vec3 i = floor( p );
     vec3 f = fract( p );
 	
-	vec3 u = f*f*(3.0-2.0*f);
+	vec3 u = smoothstep(0, 1, f); // f*f*(3.0-2.0*f);
 
-    /* gptchat idea lol
-    float n = cubicInterpolate(dot(hash(i + vec3(0.0,0.0,0.0)), f - vec3(0.0,0.0,0.0)),
-                           dot(hash(i + vec3(1.0,0.0,0.0)), f - vec3(1.0,0.0,0.0)),
-                           dot(hash(i + vec3(0.0,1.0,0.0)), f - vec3(0.0,1.0,0.0)),
-                           dot(hash(i + vec3(1.0,1.0,0.0)), f - vec3(1.0,1.0,0.0)),
-                           u.x);
-    */
-
+    // trilinear interpolation
+    // kind of, for each edge (8) this is doing
+    // dot( hash( i + vec3(0.0,0.0,0.0) ), f - vec3(0.0,0.0,0.0)
+    // so it's the dot product of a random vec and a vector pointing from each edge to the center of the interpolation.
+    // kind of makes it much better than if we did it just an interpolation because it adds that sort of 
+    // uncentered noise, if we didn't make this, this would look more squared, its a nice thing to try and research
     float n = mix( mix( mix( dot( hash( i + vec3(0.0,0.0,0.0) ), f - vec3(0.0,0.0,0.0) ), 
                           dot( hash( i + vec3(1.0,0.0,0.0) ), f - vec3(1.0,0.0,0.0) ), u.x),
                      mix( dot( hash( i + vec3(0.0,1.0,0.0) ), f - vec3(0.0,1.0,0.0) ), 
@@ -126,8 +115,10 @@ float gpt_noise(vec3 v3) {
   return fract(sin(dot(v3, vec3(12.9898, 78.233, 151.7182))) * 43758.5453);
 }
 
+
 float noise_smooth(vec3 q)
 {
+    // is this really necesary? noise is
 float f  = 0.5000*noise( q ); q = m3*q*2.01;
             f += 0.2500*noise( q ); q = m3*q*2.02;
             f += 0.1250*noise( q ); q = m3*q*2.03;

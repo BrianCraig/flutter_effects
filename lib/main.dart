@@ -259,6 +259,34 @@ class FlutterContent extends StatelessWidget {
               ),
             ],
           ),
+          const WelcomeText(
+            text: '2D Gradient noise',
+          ),
+          ShaderDemoList(
+            children: [
+              ShowShaderDemo(
+                title: 'Nearest Neighbour',
+                sample: FragmentSamples.gradientNoise2dNearest,
+                uniforms: (transform) => [
+                  Transform2DUniform(transform: transform),
+                ],
+              ),
+              ShowShaderDemo(
+                title: 'Bilinear Straight Simple',
+                sample: FragmentSamples.gradientNoise2dStraightSimple,
+                uniforms: (transform) => [
+                  Transform2DUniform(transform: transform),
+                ],
+              ),
+              ShowShaderDemo(
+                title: 'Bilinear Straight Dot',
+                sample: FragmentSamples.gradientNoise2dStraightDot,
+                uniforms: (transform) => [
+                  Transform2DUniform(transform: transform),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );

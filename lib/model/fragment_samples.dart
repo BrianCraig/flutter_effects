@@ -12,7 +12,10 @@ enum FragmentSamples {
   whiteNoiseColor("assets/shaders/noise/white_noise_color.frag"),
   whiteNoiseColorCell("assets/shaders/noise/white_noise_color_cell.frag"),
   voronoi("assets/shaders/voronoi/voronoi.frag"),
-  voronoiTime("assets/shaders/voronoi/voronoi_time.frag");
+  voronoiTime("assets/shaders/voronoi/voronoi_time.frag"),
+  gradientNoise2dNearest("assets/shaders/noise/gradient/2d/nearest.frag"),
+  gradientNoise2dStraightSimple("assets/shaders/noise/gradient/2d/straight_simple.frag"),
+  gradientNoise2dStraightDot("assets/shaders/noise/gradient/2d/straight_dot.frag");
 
   final String uri;
 
