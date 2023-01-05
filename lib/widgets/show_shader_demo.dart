@@ -5,8 +5,6 @@ import 'package:shader_toy/model/transform_2d.dart';
 import 'package:shader_toy/shader_library.dart';
 import 'package:shader_toy/widgets/transform_gesture_detector.dart';
 
-// TODO: it would be good to add a pinch/zoom, could be done using something like 'matrix_gesture_detector' lib.
-
 class ShowShaderDemo extends StatelessWidget {
   final String title;
   final FragmentSamples sample;
