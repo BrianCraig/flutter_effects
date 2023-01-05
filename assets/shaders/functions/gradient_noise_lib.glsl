@@ -1,5 +1,5 @@
 float source_hash_v1(vec2 i, vec2 dot) {
-    i = 50.0 * fract(i * 0.3183099 + vec2(0.71, 0.113));
+    i = 50.0 * fract(i * 0.3183099 + dot);
     return -1.0 + 2.0 * fract(i.x * i.y * (i.x + i.y));
 };
 
@@ -10,7 +10,7 @@ float source_hash_v1(vec2 i) {
 
 vec2 source_hash_v2(vec2 i){
     float v1 = source_hash_v1(i, vec2(0.71, 0.113));
-    float v2 = source_hash_v1(i, vec2(-0.53, 0.48));
+    float v2 = source_hash_v1(i, vec2(269.5,183.3));
     return vec2(v1, v2);
 };
 

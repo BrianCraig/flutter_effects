@@ -25,6 +25,10 @@ class FlutterApp extends StatelessWidget {
                   child: const FlutterContent(),
                 );
               }
+              if (snapshot.hasError) {
+                print(snapshot.error!.toString());
+                return Text(snapshot.error!.toString());
+              }
               return const Text('Compiling Fragment Shaders...');
             }),
       ),
@@ -284,6 +288,23 @@ class FlutterContent extends StatelessWidget {
                 uniforms: (transform) => [
                   Transform2DUniform(transform: transform),
                 ],
+              ),
+            ],
+          ),
+          const WelcomeText(
+            text: 'Simplex',
+          ),
+          ShaderDemoList(
+            children: [
+              DurationBuilder(
+                builder: (_, duration) => ShowShaderDemo(
+                  title: 'OpenSimplex2S',
+                  sample: FragmentSamples.simplex3d,
+                  uniforms: (transform) => [
+                    Transform2DUniform(transform: transform),
+                    TimeUniforms(value: duration.inSecondsDecimal)
+                  ],
+                ),
               ),
             ],
           ),

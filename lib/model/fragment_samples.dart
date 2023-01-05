@@ -15,7 +15,8 @@ enum FragmentSamples {
   voronoiTime("assets/shaders/voronoi/voronoi_time.frag"),
   gradientNoise2dNearest("assets/shaders/noise/gradient/2d/nearest.frag"),
   gradientNoise2dStraightSimple("assets/shaders/noise/gradient/2d/straight_simple.frag"),
-  gradientNoise2dStraightDot("assets/shaders/noise/gradient/2d/straight_dot.frag");
+  gradientNoise2dStraightDot("assets/shaders/noise/gradient/2d/straight_dot.frag"),
+  simplex3d("assets/shaders/noise/simplex/2_s.frag");
 
   final String uri;
 
