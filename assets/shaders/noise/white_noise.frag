@@ -8,10 +8,10 @@ precision highp float;
 
 #include <../functions/transform2d_uniforms.glsl>
 
-#include <../functions/random.glsl>
+#include <../functions/gradient_noise_lib.glsl>
 
 void main() {
     // we transform the position, even when it's pure noise
-    float r = random(uv_transform2d());
+    float r = smoothstep(-1, 1, source_hash_v1(uv_transform2d()));
     fragColor = vec4(r, r, r, 1.0);
 }

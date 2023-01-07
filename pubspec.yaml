@@ -33,5 +33,7 @@ flutter:
     - assets/shaders/noise/gradient/2d/nearest.frag
     - assets/shaders/noise/gradient/2d/straight_simple.frag
     - assets/shaders/noise/gradient/2d/straight_dot.frag
+    - assets/shaders/noise/simplex/2_s.frag
+    - assets/shaders/gradient_clouds.frag
 
   uses-material-design: true

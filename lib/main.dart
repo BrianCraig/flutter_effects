@@ -308,6 +308,23 @@ class FlutterContent extends StatelessWidget {
               ),
             ],
           ),
+          const WelcomeText(
+            text: 'Library examples',
+          ),
+          ShaderDemoList(
+            children: [
+              DurationBuilder(
+                builder: (_, duration) => ShowShaderDemo(
+                  title: 'Gradient Clouds',
+                  sample: FragmentSamples.gradientClouds,
+                  uniforms: (transform) => [
+                    Transform2DUniform(transform: transform),
+                    TimeUniforms(value: duration.inSecondsDecimal)
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
