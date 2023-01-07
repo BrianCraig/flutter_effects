@@ -69,6 +69,29 @@ class TransformUniforms extends CustomUniforms {
   int get hashCode => matrix.hashCode;
 }
 
+class ColorUniforms extends CustomUniforms {
+  final Color color;
+  const ColorUniforms({required this.color});
+
+  @override
+  void setUniforms(int baseIndex, FragmentShader shader) {
+    shader.setRGBAColor(baseIndex, color);
+  }
+
+  @override
+  int get size => 4;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ColorUniforms &&
+          runtimeType == other.runtimeType &&
+          color == other.color;
+
+  @override
+  int get hashCode => color.hashCode;
+}
+
 class Transform2DUniform extends CustomUniforms {
   final Transform2D transform;
   const Transform2DUniform({

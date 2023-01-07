@@ -16,15 +16,27 @@ uniform vec4 i_line_color;
 uniform vec4 i_first_color;
 uniform vec4 i_second_color;
 
-
 bool hash_bool(vec2 seed) {
     return source_hash_v1(seed) > 0;
+}
+
+// returns a value between 0 and 1, depending of the position
+// of a triangle function that repeats from 0 to 2
+float triangle_factor(float x) {
+    return 1 - distance(mod(x, 2), 1);
 }
 
 const float PIXEL_SIZE = 32;
 const float SPEED_MULTIPLIER = .3;
 
+const float i_cloud_size = .25;
+const float i_border_size = .03;
+
 //#define DEBUG
+
+float clamp_multiplied(float x, float edge, float mul) {
+    return clamp(x * mul - edge * mul, 0, 1);
+}
 
 void main() {
     fragColor = vec4(0, 0, 0, 0.0);
@@ -44,11 +56,10 @@ void main() {
     float line_distance = min(center_distance, line_y_distance);
 
     if(is_active && (left_active || right_active)) {
-        if(line_distance < .2) {
-            fragColor = vec4(1);
-        } else if(line_distance < .25) {
-            fragColor = vec4(0, 0, 1, 1);
-        }
+        vec4 cloud_color = mix(i_first_color, i_second_color, triangle_factor((position.y + .2) * 2));
+        vec4 inColor = mix(cloud_color, i_line_color, clamp_multiplied(line_distance, i_cloud_size, 50 / i_scale));
+        fragColor = mix(inColor, vec4(0), clamp_multiplied(line_distance, i_cloud_size + i_border_size, 50 / i_scale));
+
     }
 
     #ifdef DEBUG

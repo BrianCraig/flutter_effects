@@ -319,7 +319,12 @@ class FlutterContent extends StatelessWidget {
                   sample: FragmentSamples.gradientClouds,
                   uniforms: (transform) => [
                     Transform2DUniform(transform: transform),
-                    TimeUniforms(value: duration.inSecondsDecimal)
+                    TimeUniforms(value: duration.inSecondsDecimal),
+                    const ColorUniforms(color: Colors.blue), // line
+                    const ColorUniforms(
+                        color: Color.fromARGB(255, 4, 78, 142)), //color top
+                    const ColorUniforms(
+                        color: Color.fromARGB(255, 255, 1, 128)), //color bottom
                   ],
                 ),
               ),

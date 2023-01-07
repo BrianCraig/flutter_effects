@@ -21,7 +21,6 @@ class Transform2DGesture extends StatefulWidget {
 }
 
 class _Transform2DGestureState extends State<Transform2DGesture> {
-  Transform2D transform2d = const Transform2D();
   Offset translation = Offset.zero;
 
   double currentScale = 1.0;
@@ -30,53 +29,88 @@ class _Transform2DGestureState extends State<Transform2DGesture> {
   double totalScale = 1.0;
   double totalRotation = 0.0;
 
+  late FocusNode focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  Transform2D get transform2d => Transform2D(
+              translation: translation,
+              scale: totalScale * currentScale,
+              rotation: totalRotation + currentRotation,
+            );
+
   void onDrag(DragUpdateDetails details) {
     setState(() {
+      FocusScope.of(context).requestFocus(focusNode);
       final actualScale = totalScale * currentScale;
       final actualRotation = totalRotation + currentRotation;
 
       translation += rotate(-details.delta, actualRotation) * actualScale;
-
-      transform2d = Transform2D(
-        translation: translation,
-        scale: actualScale,
-        rotation: actualRotation,
-      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onVerticalDragUpdate: onDrag,
-      onScaleUpdate: (details) => {
-        setState(() {
-          currentScale = 1 / details.scale;
-          currentRotation = -details.rotation;
-
-          final actualScale = totalScale * currentScale;
-          final actualRotation = totalRotation + currentRotation;
-
-          translation +=
-              rotate(-details.focalPointDelta, actualRotation) * actualScale;
-
-          transform2d = Transform2D(
-            translation: translation,
-            scale: actualScale,
-            rotation: actualRotation,
-          );
-        })
+    return KeyboardListener(
+      focusNode: focusNode,
+      autofocus: true,
+      onKeyEvent: (key) {
+        if(key.character == '+'){
+          setState(() {
+            totalScale *= .66;
+          });
+        }
+        if(key.character == '-'){
+          setState(() {
+            totalScale /= .66;
+          });
+        }
+        if(key.character == '7'){
+          setState(() {
+            totalRotation += pi/12;
+          });
+        }
+        if(key.character == '9'){
+          setState(() {
+            totalRotation -= pi/12;
+          });
+        }
       },
-      onScaleEnd: (details) => {
-        setState(() {
-          totalScale *= currentScale;
-          totalRotation += currentRotation;
-          currentScale = 1.0;
-          currentRotation = 0;
-        })
-      },
-      child: widget.builder(context, transform2d),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onScaleUpdate: (details) => {
+          setState(() {
+            FocusScope.of(context).requestFocus(focusNode);
+            currentScale = 1 / details.scale;
+            currentRotation = -details.rotation;
+
+            final actualScale = totalScale * currentScale;
+            final actualRotation = totalRotation + currentRotation;
+
+            translation +=
+                rotate(-details.focalPointDelta, actualRotation) * actualScale;
+          })
+        },
+        onScaleEnd: (details) => {
+          setState(() {
+            totalScale *= currentScale;
+            totalRotation += currentRotation;
+            currentScale = 1.0;
+            currentRotation = 0;
+          })
+        },
+        child: widget.builder(context, transform2d),
+      ),
     );
   }
 }
