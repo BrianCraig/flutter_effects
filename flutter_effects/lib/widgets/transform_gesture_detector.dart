@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shader_toy/model/transform_2d.dart';
+import 'package:flutter_effects/model/transform_2d.dart';
 
 Offset rotate(Offset original, double rotation) {
   double s = sin(rotation);

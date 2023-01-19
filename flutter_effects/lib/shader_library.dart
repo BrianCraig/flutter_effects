@@ -1,7 +1,7 @@
 import 'dart:ui' show FragmentProgram, FragmentShader;
 
 import 'package:flutter/widgets.dart';
-import 'package:shader_toy/model/transform_2d.dart';
+import 'package:flutter_effects/model/transform_2d.dart';
 
 abstract class CustomUniforms {
   const CustomUniforms();

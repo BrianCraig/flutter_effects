@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "shader_toy",
+            "name": "flutter_effects",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "shader_toy (profile mode)",
+            "name": "flutter_effects (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "shader_toy (release mode)",
+            "name": "flutter_effects (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
