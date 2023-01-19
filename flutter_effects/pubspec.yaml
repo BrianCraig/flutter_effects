@@ -20,20 +20,20 @@ dev_dependencies:
 
 flutter:
   shaders:
-    #- assets/shaders/noise_gradient.glsl
-    #- assets/shaders/truchet_tiling.glsl
-    #- assets/shaders/debug.glsl
-    #- assets/shaders/noise_types.glsl
-    #- assets/shaders/scattered_semicircles.glsl
-    - assets/shaders/noise/white_noise.frag
-    - assets/shaders/noise/white_noise_color.frag
-    - assets/shaders/noise/white_noise_color_cell.frag
-    - assets/shaders/voronoi/voronoi.frag
-    - assets/shaders/voronoi/voronoi_time.frag
-    - assets/shaders/noise/gradient/2d/nearest.frag
-    - assets/shaders/noise/gradient/2d/straight_simple.frag
-    - assets/shaders/noise/gradient/2d/straight_dot.frag
-    - assets/shaders/noise/simplex/2_s.frag
-    - assets/shaders/gradient_clouds.frag
+    #- lib/shaders/noise_gradient.glsl
+    #- lib/shaders/truchet_tiling.glsl
+    #- lib/shaders/debug.glsl
+    #- lib/shaders/noise_types.glsl
+    #- lib/shaders/scattered_semicircles.glsl
+    - lib/shaders/noise/white_noise.frag
+    - lib/shaders/noise/white_noise_color.frag
+    - lib/shaders/noise/white_noise_color_cell.frag
+    - lib/shaders/voronoi/voronoi.frag
+    - lib/shaders/voronoi/voronoi_time.frag
+    - lib/shaders/noise/gradient/2d/nearest.frag
+    - lib/shaders/noise/gradient/2d/straight_simple.frag
+    - lib/shaders/noise/gradient/2d/straight_dot.frag
+    - lib/shaders/noise/simplex/2_s.frag
+    - lib/shaders/gradient_clouds.frag
 
   uses-material-design: true

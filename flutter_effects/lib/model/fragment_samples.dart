@@ -3,23 +3,23 @@ import 'dart:ui' show FragmentProgram;
 typedef FragmentMap = Map<FragmentSamples, FragmentProgram>;
 
 enum FragmentSamples {
-  //noiseGradient("assets/shaders/noise_gradient.glsl"),
-  //truchetTiling("assets/shaders/truchet_tiling.glsl"),
-  //debug("assets/shaders/debug.glsl"),
-  //noiseTypes("assets/shaders/noise_types.glsl"),
-  //scatteredSemicircles("assets/shaders/scattered_semicircles.glsl"),
-  whiteNoise("assets/shaders/noise/white_noise.frag"),
-  whiteNoiseColor("assets/shaders/noise/white_noise_color.frag"),
-  whiteNoiseColorCell("assets/shaders/noise/white_noise_color_cell.frag"),
-  voronoi("assets/shaders/voronoi/voronoi.frag"),
-  voronoiTime("assets/shaders/voronoi/voronoi_time.frag"),
-  gradientNoise2dNearest("assets/shaders/noise/gradient/2d/nearest.frag"),
+  //noiseGradient("lib/shaders/noise_gradient.glsl"),
+  //truchetTiling("lib/shaders/truchet_tiling.glsl"),
+  //debug("lib/shaders/debug.glsl"),
+  //noiseTypes("lib/shaders/noise_types.glsl"),
+  //scatteredSemicircles("lib/shaders/scattered_semicircles.glsl"),
+  whiteNoise("lib/shaders/noise/white_noise.frag"),
+  whiteNoiseColor("lib/shaders/noise/white_noise_color.frag"),
+  whiteNoiseColorCell("lib/shaders/noise/white_noise_color_cell.frag"),
+  voronoi("lib/shaders/voronoi/voronoi.frag"),
+  voronoiTime("lib/shaders/voronoi/voronoi_time.frag"),
+  gradientNoise2dNearest("lib/shaders/noise/gradient/2d/nearest.frag"),
   gradientNoise2dStraightSimple(
-      "assets/shaders/noise/gradient/2d/straight_simple.frag"),
+      "lib/shaders/noise/gradient/2d/straight_simple.frag"),
   gradientNoise2dStraightDot(
-      "assets/shaders/noise/gradient/2d/straight_dot.frag"),
-  simplex3d("assets/shaders/noise/simplex/2_s.frag"),
-  gradientClouds("assets/shaders/gradient_clouds.frag");
+      "lib/shaders/noise/gradient/2d/straight_dot.frag"),
+  simplex3d("lib/shaders/noise/simplex/2_s.frag"),
+  gradientClouds("lib/shaders/gradient_clouds.frag");
 
   final String uri;
 
