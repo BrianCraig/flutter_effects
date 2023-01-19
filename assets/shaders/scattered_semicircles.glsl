@@ -6,8 +6,6 @@ precision highp float;
 
 #include <functions/standard_uniforms.glsl>
 
-#include <functions/standard_uv.glsl>
-
 #include <functions/noise.glsl>
 
 layout(location = 3) uniform vec4 i_color_background;
