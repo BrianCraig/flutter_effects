@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shader_toy/model/fragment_samples.dart';
@@ -320,11 +322,17 @@ class FlutterContent extends StatelessWidget {
                   uniforms: (transform) => [
                     Transform2DUniform(transform: transform),
                     TimeUniforms(value: duration.inSecondsDecimal),
-                    const ColorUniforms(color: Colors.blue), // line
+                    ColorUniforms(
+                        color: Color.lerp(
+                      Colors.blue,
+                      Colors.red,
+                      cos(duration.inSecondsDecimal),
+                    )!), // line
                     const ColorUniforms(
-                        color: Color.fromARGB(255, 4, 78, 142)), //color top
+                        color: Color.fromARGB(255, 142, 4, 4)), //color top
                     const ColorUniforms(
-                        color: Color.fromARGB(255, 255, 1, 128)), //color bottom
+                        color:
+                            Color.fromARGB(255, 255, 123, 189)), //color bottom
                   ],
                 ),
               ),
