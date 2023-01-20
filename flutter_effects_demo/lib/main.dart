@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_effects_demo/shaders_data.dart';
+import 'package:provider/provider.dart';
+
+extension ListFiller<T> on List<T> {
+  List<T> fillBetween(T element) {
+    return List.generate(
+        length * 2 - 1, (index) => index % 2 == 0 ? this[index ~/ 2] : element);
+  }
+}
 
 void main() {
   runApp(const MyApp());
@@ -10,36 +19,86 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: ValueNotifier(
+            ShaderSample.SimplexGradient,
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(),
       ),
-      home: const MyHomePage(title: 'SimplexGradient'),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  final String title;
   const MyHomePage({
     super.key,
-    required this.title,
   });
 
   @override
   Widget build(BuildContext context) {
+    final ss = context.watch<ValueNotifier<ShaderSample>>().value;
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(ss.title),
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Align(
-          alignment: Alignment.bottomRight,
-          child: ShaderControls(),
+          alignment: Alignment.bottomCenter,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: const [
+              Expanded(child: ShaderSelector()),
+              ShaderControls(),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class ShaderSelector extends StatelessWidget {
+  const ShaderSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final ss = context.watch<ValueNotifier<ShaderSample>>();
+
+    return Row(
+      children: ShaderSample.values
+          .map(
+            // ignore: unnecessary_cast
+            (sample) => TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(),
+                foregroundColor: Colors.black,
+              ),
+              onPressed: sample == ss.value
+                  ? null
+                  : () {
+                      ss.value = sample;
+                    },
+              child: Text(sample.title),
+            ) as Widget,
+          )
+          .toList()
+          .fillBetween(
+            const SizedBox(
+              width: 8,
+            ),
+          ),
     );
   }
 }
@@ -56,19 +115,19 @@ class ShaderControls extends StatelessWidget {
           title: 'translate',
         ),
         SizedBox(
-          height: 16,
+          height: 8,
         ),
         ShaderControl(
           title: 'rotate',
         ),
         SizedBox(
-          height: 16,
+          height: 8,
         ),
         ShaderControl(
           title: 'scale',
         ),
         SizedBox(
-          height: 16,
+          height: 8,
         ),
         ShaderControl(
           title: 'time',
@@ -110,7 +169,7 @@ class ShaderControl extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: const [
-                ShaderControlValue( value: '0.001'),
+                ShaderControlValue(value: '0.001'),
                 SizedBox(
                   width: 8,
                 ),
@@ -120,7 +179,7 @@ class ShaderControl extends StatelessWidget {
                 SizedBox(
                   width: 8,
                 ),
-                 ShaderControlButton(
+                ShaderControlButton(
                   icon: Icons.add,
                 ),
               ],
@@ -133,7 +192,7 @@ class ShaderControl extends StatelessWidget {
 }
 
 class ShaderControlValue extends StatelessWidget {
-final String value;
+  final String value;
 
   const ShaderControlValue({
     super.key,
@@ -169,6 +228,7 @@ class ShaderControlButton extends StatelessWidget {
         backgroundColor: Colors.white,
         minimumSize: Size.zero,
         iconColor: Colors.black,
+        shape: const RoundedRectangleBorder(),
       ),
       onPressed: () {},
       child: Icon(icon),
