@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_effects/flutter_effects.dart';
 import 'package:flutter_effects/model/fragment_samples.dart';
-import 'package:flutter_effects/model/transform_2d.dart';
-import 'package:flutter_effects/shader_library.dart';
-import 'package:flutter_effects/widgets/transform_gesture_detector.dart';
 import 'package:provider/provider.dart';
 
 class ShowShaderDemo extends StatelessWidget {
