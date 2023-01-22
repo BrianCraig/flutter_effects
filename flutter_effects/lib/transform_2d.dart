@@ -19,6 +19,12 @@ class Transform2D {
           rotation == other.rotation &&
           scale == other.scale;
 
+  Transform2D operator +(Transform2D other) => Transform2D(
+        translation: translation + other.translation,
+        scale: scale * other.scale,
+        rotation: rotation + other.rotation,
+      );
+
   @override
   int get hashCode => translation.hashCode ^ rotation.hashCode ^ scale.hashCode;
 }

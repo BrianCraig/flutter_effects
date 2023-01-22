@@ -1,11 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_effects/flutter_effects.dart';
 import 'package:flutter_effects_demo/shaders_data.dart';
 import 'package:provider/provider.dart';
 
 extension ListFiller<T> on List<T> {
   List<T> fillBetween(T element) {
     return List.generate(
-        length * 2 - 1, (index) => index % 2 == 0 ? this[index ~/ 2] : element);
+        max(length * 2 - 1, 0), (index) => index % 2 == 0 ? this[index ~/ 2] : element);
   }
 }
 
@@ -21,14 +24,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: ValueNotifier(
+        ChangeNotifierProvider(
+          create: (_) => ValueNotifier(
             ShaderSample.SimplexGradient,
           ),
         ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Flutter Effects Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
@@ -46,21 +49,35 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ss = context.watch<ValueNotifier<ShaderSample>>().value;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(ss.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
-              Expanded(child: ShaderSelector()),
-              ShaderControls(),
-            ],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ValueNotifier(
+            const Transform2D(),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ValueNotifier(
+            Duration.zero,
+          ),
+        ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(ss.title),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: const [
+                Expanded(child: ShaderSelector()),
+                ShaderControls(),
+              ],
+            ),
           ),
         ),
       ),
@@ -113,25 +130,53 @@ class ShaderControls extends StatelessWidget {
       children: const [
         ShaderControl(
           title: 'translate',
+          controls: [],
         ),
         SizedBox(
           height: 8,
         ),
         ShaderControl(
           title: 'rotate',
+          controls: [],
         ),
         SizedBox(
           height: 8,
         ),
-        ShaderControl(
-          title: 'scale',
-        ),
+        T2DScaleControl(),
         SizedBox(
           height: 8,
         ),
         ShaderControl(
           title: 'time',
+          controls: [],
         ),
+      ],
+    );
+  }
+}
+
+class T2DScaleControl extends StatelessWidget {
+  const T2DScaleControl({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final t2d = context.watch<ValueNotifier<Transform2D>>();
+    return ShaderControl(
+      title: 'Scale',
+      controls: [
+        ShaderControlValue(value: t2d.value.scale.toString()),
+        ShaderControlButton(
+          onPressed: () {
+            t2d.value += const Transform2D(scale: 1 / 1.1);
+          },
+          icon: Icons.remove,
+        ),
+        ShaderControlButton(
+          onPressed: () {
+            t2d.value += const Transform2D(scale: 1.1);
+          },
+          icon: Icons.add,
+        )
       ],
     );
   }
@@ -139,9 +184,11 @@ class ShaderControls extends StatelessWidget {
 
 class ShaderControl extends StatelessWidget {
   final String title;
+  final List<Widget> controls;
   const ShaderControl({
     super.key,
     required this.title,
+    required this.controls,
   });
 
   @override
@@ -168,21 +215,11 @@ class ShaderControl extends StatelessWidget {
             height: 32,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const [
-                ShaderControlValue(value: '0.001'),
-                SizedBox(
+              children: controls.fillBetween(
+                const SizedBox(
                   width: 8,
                 ),
-                ShaderControlButton(
-                  icon: Icons.remove,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                ShaderControlButton(
-                  icon: Icons.add,
-                ),
-              ],
+              ),
             ),
           ),
         )
@@ -216,9 +253,12 @@ class ShaderControlValue extends StatelessWidget {
 
 class ShaderControlButton extends StatelessWidget {
   final IconData icon;
+
+  final void Function() onPressed;
   const ShaderControlButton({
     super.key,
     required this.icon,
+    required this.onPressed,
   });
 
   @override
@@ -230,7 +270,7 @@ class ShaderControlButton extends StatelessWidget {
         iconColor: Colors.black,
         shape: const RoundedRectangleBorder(),
       ),
-      onPressed: () {},
+      onPressed: onPressed,
       child: Icon(icon),
     );
   }
