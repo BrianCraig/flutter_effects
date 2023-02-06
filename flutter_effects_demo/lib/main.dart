@@ -2,17 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_effects/flutter_effects.dart';
+import 'package:flutter_effects_demo/helpers.dart';
 import 'package:flutter_effects_demo/providers.dart';
 import 'package:flutter_effects_demo/shaders_data.dart';
 import 'package:flutter_effects_demo/widgets/transform_gesture_detector.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-extension ListFiller<T> on List<T> {
-  List<T> fillBetween(T element) {
-    return List.generate(max(length * 2 - 1, 0),
-        (index) => index % 2 == 0 ? this[index ~/ 2] : element);
-  }
-}
 
 void main() {
   runApp(
@@ -128,17 +122,11 @@ class ShaderControls extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: const [
-        ShaderControl(
-          title: 'translate',
-          controls: [],
-        ),
+        T2DTranslateControl(),
         SizedBox(
           height: 8,
         ),
-        ShaderControl(
-          title: 'rotate',
-          controls: [],
-        ),
+        T2DRotateControl(),
         SizedBox(
           height: 8,
         ),
@@ -155,6 +143,51 @@ class ShaderControls extends StatelessWidget {
   }
 }
 
+class T2DTranslateControl extends ConsumerWidget {
+  const T2DTranslateControl({super.key});
+
+  @override
+  Widget build(context, ref) {
+    final t2d = ref.watch(Transform2DProvider);
+    return ShaderControl(
+      title: 'Translate',
+      controls: [
+        ShaderControlValue(value: t2d.translation.dx.decimals(3).toString()),
+        ShaderControlValue(value: t2d.translation.dy.decimals(3).toString()),
+      ],
+    );
+  }
+}
+
+class T2DRotateControl extends ConsumerWidget {
+  const T2DRotateControl({super.key});
+
+  @override
+  Widget build(context, ref) {
+    final t2d = ref.watch(Transform2DProvider);
+    return ShaderControl(
+      title: 'Rotate',
+      controls: [
+        ShaderControlValue(value: t2d.rotation.decimals(3).toString()),
+        ShaderControlButton(
+          onPressed: () {
+            ref.read(Transform2DProvider.notifier).state +=
+                const Transform2D(rotation: 1/6 * pi);
+          },
+          icon: Icons.turn_left,
+        ),
+        ShaderControlButton(
+          onPressed: () {
+            ref.read(Transform2DProvider.notifier).state +=
+                const Transform2D(rotation: -1/6 * pi);
+          },
+          icon: Icons.turn_right,
+        )
+      ],
+    );
+  }
+}
+
 class T2DScaleControl extends ConsumerWidget {
   const T2DScaleControl({super.key});
 
@@ -164,7 +197,7 @@ class T2DScaleControl extends ConsumerWidget {
     return ShaderControl(
       title: 'Scale',
       controls: [
-        ShaderControlValue(value: t2d.scale.toString()),
+        ShaderControlValue(value: t2d.scale.decimals(3).toString()),
         ShaderControlButton(
           onPressed: () {
             ref.read(Transform2DProvider.notifier).state +=

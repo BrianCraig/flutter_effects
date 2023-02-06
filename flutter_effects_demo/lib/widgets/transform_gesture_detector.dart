@@ -77,6 +77,7 @@ class _Transform2DGestureState extends State<Transform2DGestureWidget> {
           current = const Transform2D();
         })
       },
+      trackpadScrollCausesScale: true,
       child: widget.child,
     );
   }
