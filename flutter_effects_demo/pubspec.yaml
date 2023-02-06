@@ -14,6 +14,7 @@ dependencies:
   provider: ^6.0.5
   flutter_effects:
     path: ../flutter_effects
+  flutter_riverpod: ^2.1.3
 
 dev_dependencies:
   flutter_test:
