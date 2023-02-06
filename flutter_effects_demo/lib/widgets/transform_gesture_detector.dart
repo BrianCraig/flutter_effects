@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_effects/flutter_effects.dart';
-import 'package:provider/provider.dart';
 
 Offset rotate(Offset original, double rotation) {
   double s = sin(rotation);
@@ -14,8 +13,14 @@ Offset rotate(Offset original, double rotation) {
 
 class Transform2DGestureWidget extends StatefulWidget {
   final Widget child;
+  final void Function(Transform2D) onChange;
+  final Transform2D value;
 
-  const Transform2DGestureWidget({super.key, required this.child});
+  const Transform2DGestureWidget(
+      {super.key,
+      required this.child,
+      required this.onChange,
+      required this.value});
 
   @override
   State<Transform2DGestureWidget> createState() => _Transform2DGestureState();
@@ -24,11 +29,13 @@ class Transform2DGestureWidget extends StatefulWidget {
 class _Transform2DGestureState extends State<Transform2DGestureWidget> {
   // pre-gesture transform
   Transform2D initial = const Transform2D();
-  // current modification
+
   Transform2D current = const Transform2D();
+
 
   @override
   void initState() {
+    initial = widget.value;
     super.initState();
   }
 
@@ -39,11 +46,10 @@ class _Transform2DGestureState extends State<Transform2DGestureWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final t2d = context.watch<ValueNotifier<Transform2D>>();
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onScaleStart: (details) {
-        initial = t2d.value;
+        initial = widget.value;
       },
       onScaleUpdate: (details) {
         setState(() {
@@ -57,10 +63,12 @@ class _Transform2DGestureState extends State<Transform2DGestureWidget> {
                 rotate(-details.focalPointDelta, actualRotation) * actualScale,
           );
 
-          t2d.value = Transform2D(
-            scale: actualScale,
-            rotation: actualRotation,
-            translation: initial.translation + current.translation,
+          widget.onChange(
+            Transform2D(
+              scale: actualScale,
+              rotation: actualRotation,
+              translation: initial.translation + current.translation,
+            ),
           );
         });
       },
@@ -69,7 +77,7 @@ class _Transform2DGestureState extends State<Transform2DGestureWidget> {
           current = const Transform2D();
         })
       },
-      child: widget,
+      child: widget.child,
     );
   }
 }

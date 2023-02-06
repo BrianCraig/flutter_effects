@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_effects/flutter_effects.dart';
 import 'package:flutter_effects_demo/providers.dart';
 import 'package:flutter_effects_demo/shaders_data.dart';
+import 'package:flutter_effects_demo/widgets/transform_gesture_detector.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 extension ListFiller<T> on List<T> {
@@ -48,7 +49,7 @@ class MyHomePage extends ConsumerWidget {
   });
 
   @override
-  Widget build(context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ss = ref.watch(ShaderSampleProvider);
     final t2d = ref.watch(Transform2DProvider);
     final programs = ref.watch(FragmentProgramsProvider);
@@ -56,23 +57,27 @@ class MyHomePage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(ss.title),
       ),
-      body: FragmentShaderPaint(
-        fragmentProgram: programs.value![ss]!,
-        uniforms: [
-          Transform2DUniform(transform: t2d),
-          const TimeUniforms(value: 1),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                Expanded(child: ShaderSelector()),
-                ShaderControls(),
-              ],
+      body: Transform2DGestureWidget(
+        value: t2d,
+        onChange: (v) => ref.read(Transform2DProvider.notifier).state = v,
+        child: FragmentShaderPaint(
+          fragmentProgram: programs.value![ss]!,
+          uniforms: [
+            Transform2DUniform(transform: t2d),
+            const TimeUniforms(value: 1),
+          ],
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: const [
+                  Expanded(child: ShaderSelector()),
+                  ShaderControls(),
+                ],
+              ),
             ),
           ),
         ),
