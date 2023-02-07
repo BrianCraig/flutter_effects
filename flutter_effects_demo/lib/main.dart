@@ -5,13 +5,16 @@ import 'package:flutter_effects/flutter_effects.dart';
 import 'package:flutter_effects_demo/helpers.dart';
 import 'package:flutter_effects_demo/providers.dart';
 import 'package:flutter_effects_demo/shaders_data.dart';
+import 'package:flutter_effects_demo/widgets/time_manager.dart';
 import 'package:flutter_effects_demo/widgets/transform_gesture_detector.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   runApp(
     const ProviderScope(
-      child: MyApp(),
+      child: TimeProvider(
+        child: MyApp(),
+      ),
     ),
   );
 }
@@ -47,6 +50,7 @@ class MyHomePage extends ConsumerWidget {
     final ss = ref.watch(ShaderSampleProvider);
     final t2d = ref.watch(Transform2DProvider);
     final programs = ref.watch(FragmentProgramsProvider);
+    final time = Time.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(ss.title),
@@ -58,7 +62,7 @@ class MyHomePage extends ConsumerWidget {
           fragmentProgram: programs.value![ss]!,
           uniforms: [
             Transform2DUniform(transform: t2d),
-            const TimeUniforms(value: 1),
+            TimeUniforms(value: time.total.inSecondsDecimal),
           ],
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -134,10 +138,7 @@ class ShaderControls extends StatelessWidget {
         SizedBox(
           height: 8,
         ),
-        ShaderControl(
-          title: 'time',
-          controls: [],
-        ),
+        TimeControl(),
       ],
     );
   }
@@ -172,17 +173,52 @@ class T2DRotateControl extends ConsumerWidget {
         ShaderControlButton(
           onPressed: () {
             ref.read(Transform2DProvider.notifier).state +=
-                const Transform2D(rotation: 1/6 * pi);
+                const Transform2D(rotation: 1 / 6 * pi);
           },
           icon: Icons.turn_left,
         ),
         ShaderControlButton(
           onPressed: () {
             ref.read(Transform2DProvider.notifier).state +=
-                const Transform2D(rotation: -1/6 * pi);
+                const Transform2D(rotation: -1 / 6 * pi);
           },
           icon: Icons.turn_right,
         )
+      ],
+    );
+  }
+}
+
+class TimeControl extends ConsumerWidget {
+  const TimeControl({super.key});
+
+  @override
+  Widget build(context, ref) {
+    final time = Time.of(context);
+    return ShaderControl(
+      title: 'Time',
+      controls: [
+        ShaderControlValue(
+            value: time.total.inSecondsDecimal.decimals(2).toString()),
+        ShaderControlButton(
+          onPressed: () {
+            time.toggle();
+            (context as Element).markNeedsBuild();
+          },
+          icon: time.isActive ? Icons.pause : Icons.play_arrow,
+        ),
+        ShaderControlButton(
+          onPressed: () {
+            time.tps.multiplier *= 1 / 1.25; 
+          },
+          icon: Icons.remove,
+        ),
+        ShaderControlButton(
+          onPressed: () {
+            time.tps.multiplier *= 1.25; 
+          },
+          icon: Icons.add,
+        ),
       ],
     );
   }
@@ -211,7 +247,7 @@ class T2DScaleControl extends ConsumerWidget {
                 const Transform2D(scale: 1.1);
           },
           icon: Icons.add,
-        )
+        ),
       ],
     );
   }
