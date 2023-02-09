@@ -25,6 +25,17 @@ class Transform2D {
         rotation: rotation + other.rotation,
       );
 
+  Transform2D clone({
+    Offset? translation,
+    double? rotation,
+    double? scale,
+  }) =>
+      Transform2D(
+        translation: translation ?? this.translation,
+        scale: scale ?? this.scale,
+        rotation: rotation ?? this.rotation,
+      );
+
   @override
   int get hashCode => translation.hashCode ^ rotation.hashCode ^ scale.hashCode;
 }

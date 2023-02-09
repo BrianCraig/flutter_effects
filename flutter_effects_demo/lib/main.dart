@@ -64,14 +64,14 @@ class MyHomePage extends ConsumerWidget {
             Transform2DUniform(transform: t2d),
             TimeUniforms(value: time.total.inSecondsDecimal),
           ],
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+          child: const Padding(
+            padding: EdgeInsets.all(16),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
-                children: const [
+                children: [
                   Expanded(child: ShaderSelector()),
                   ShaderControls(),
                 ],
@@ -123,9 +123,9 @@ class ShaderControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       mainAxisSize: MainAxisSize.min,
-      children: const [
+      children: [
         T2DTranslateControl(),
         SizedBox(
           height: 8,
@@ -156,6 +156,8 @@ class T2DTranslateControl extends ConsumerWidget {
         ShaderControlValue(value: t2d.translation.dx.decimals(3).toString()),
         ShaderControlValue(value: t2d.translation.dy.decimals(3).toString()),
       ],
+      onReset: () => ref.read(Transform2DProvider.notifier).state =
+          t2d.clone(translation: Offset.zero),
     );
   }
 }
@@ -185,6 +187,8 @@ class T2DRotateControl extends ConsumerWidget {
           icon: Icons.turn_right,
         )
       ],
+      onReset: () =>
+          ref.read(Transform2DProvider.notifier).state = t2d.clone(rotation: 0),
     );
   }
 }
@@ -209,17 +213,18 @@ class TimeControl extends ConsumerWidget {
         ),
         ShaderControlButton(
           onPressed: () {
-            time.tps.multiplier *= 1 / 1.25; 
+            time.tps.multiplier *= 1 / 1.25;
           },
           icon: Icons.remove,
         ),
         ShaderControlButton(
           onPressed: () {
-            time.tps.multiplier *= 1.25; 
+            time.tps.multiplier *= 1.25;
           },
           icon: Icons.add,
         ),
       ],
+      onReset: () => time.total = Duration.zero,
     );
   }
 }
@@ -249,6 +254,8 @@ class T2DScaleControl extends ConsumerWidget {
           icon: Icons.add,
         ),
       ],
+      onReset: () =>
+          ref.read(Transform2DProvider.notifier).state = t2d.clone(scale: 1),
     );
   }
 }
@@ -256,10 +263,12 @@ class T2DScaleControl extends ConsumerWidget {
 class ShaderControl extends StatelessWidget {
   final String title;
   final List<Widget> controls;
+  final void Function()? onReset;
   const ShaderControl({
     super.key,
     required this.title,
     required this.controls,
+    this.onReset,
   });
 
   @override
@@ -268,15 +277,37 @@ class ShaderControl extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          color: Colors.black87,
-          child: Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              color: Colors.black87,
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
-          ),
+            const SizedBox(
+              width: 8,
+            ),
+            if (onReset != null)
+              GestureDetector(
+                onTap: onReset,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.black87,
+                  child: const Text(
+                    'Reset',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
         Container(
           padding: const EdgeInsets.all(8),

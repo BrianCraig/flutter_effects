@@ -16,7 +16,18 @@ class TimeProviderState extends State<TimeProvider>
     with SingleTickerProviderStateMixin {
   late final Ticker ticker;
   bool justPaused = false;
-  Duration total = Duration.zero, delta = Duration.zero;
+  Duration delta = Duration.zero;
+
+  Duration _total = Duration.zero;
+
+  Duration get total => _total;
+
+  set total(Duration newValue) {
+    setState(() {
+      _total = newValue;
+    });
+  }
+
   Duration lastTotal = Duration.zero;
   double multiplier = 1;
 
@@ -31,7 +42,7 @@ class TimeProviderState extends State<TimeProvider>
         }
         Duration diff = (frameDelta - lastTotal) * multiplier;
         lastTotal = frameDelta;
-        total += diff;
+        _total += diff;
         delta = diff;
       });
     });
@@ -61,17 +72,25 @@ class TimeProviderState extends State<TimeProvider>
 }
 
 class Time extends InheritedWidget {
-  final Duration total, delta;
+  final Duration delta;
+
+  final Duration _total;
+
+  Duration get total => _total;
+
+  set total(Duration newValue) {
+    tps.total = newValue;
+  }
 
   final TimeProviderState tps;
 
   const Time({
     super.key,
     required this.tps,
-    required this.total,
+    required Duration total,
     required this.delta,
     required super.child,
-  });
+  }) : _total = total;
 
   void toggle() => tps.toggle();
 
