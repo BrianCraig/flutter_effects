@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'shaders_data.dart';
 
 final ShaderSampleProvider = StateProvider<ShaderSample>(
-  (ref) => ShaderSample.SimplexGradient,
+  (ref) => ShaderSample.SimpleGradient,
 );
 
 final FragmentProgramsProvider = FutureProvider<FragmentMap>((ref) async {

@@ -3,27 +3,31 @@ import 'dart:ui' show FragmentProgram;
 import 'package:flutter/widgets.dart';
 
 enum ShaderSample {
-  SimplexGradient(
-    title: 'Simplex Gradients',
-    uri: 'packages/flutter_effects/shaders/noise/simplex/2_s.frag',
+  SimpleGradient(
+    title: 'Simple Gradient',
+    uri: 'packages/flutter_effects/shaders/simple_gradient.frag',
+    description: 'Simple time gradient based on the internal generation of Simplex Noise.',
     controls: [],
     provider: SizedBox(),
   ),
   StepsGradient(
     title: 'Steps Gradients',
     uri: 'packages/flutter_effects/shaders/noise/simplex/2_s.frag',
+    description: '',
     controls: [],
     provider: SizedBox(),
   );
 
   final String uri;
   final String title;
+  final String description;
   final List<Widget> controls;
   final Widget provider;
 
   const ShaderSample({
     required this.uri,
     required this.title,
+    required this.description,
     required this.controls,
     required this.provider,
   });
