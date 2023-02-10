@@ -10,6 +10,9 @@ precision highp float;
 
 #include <functions/time_uniforms.glsl>
 
+uniform vec4 i_color_background;
+uniform vec4 i_color_line;
+
 const float PIXEL_SIZE = 32;
 
 float noise(vec2 p) {
@@ -18,7 +21,7 @@ float noise(vec2 p) {
 }
 
 float point_from_pos(vec2 pos, float unit) {
-    return noise(vec2(floor(pos.x) - 1 + unit, round(pos.y)));
+    return noise(vec2(floor(pos.x) - 1 + unit, floor(pos.y)));
 }
 
 float cubic_interpolate(float x0, float x1, float x2, float x3, float t) {
@@ -39,6 +42,8 @@ void main() {
     float b = point_from_pos(position, 1);
     float c = point_from_pos(position, 2);
     float d = point_from_pos(position, 3);
-    float interpolation = cubic_interpolate(a, b, c, d, fract(position.x));
-    fragColor = vec4(vec3(interpolation), 1);
+    float interpolation = cubic_interpolate(a, b, c, d, fract(position.x)) *.8 +.1;
+    float di = distance(interpolation, fract(position.y));
+    fragColor = mix(i_color_line, i_color_background, smoothstep(0, 1, floor(di*PIXEL_SIZE)));
+
 }
