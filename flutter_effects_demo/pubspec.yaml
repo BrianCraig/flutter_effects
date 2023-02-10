@@ -23,5 +23,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   shaders:
-    - packages/flutter_effects/shaders/noise/simplex/2_s.frag
     - packages/flutter_effects/shaders/simple_gradient.frag
+    - packages/flutter_effects/shaders/splines.frag

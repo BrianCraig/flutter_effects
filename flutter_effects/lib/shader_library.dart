@@ -38,6 +38,15 @@ class _FragmentShaderPaintState extends State<FragmentShaderPaint> {
   }
 
   @override
+void didUpdateWidget(FragmentShaderPaint oldWidget) {
+  if (oldWidget.fragmentProgram != widget.fragmentProgram) {
+    shader.dispose();
+    shader = widget.fragmentProgram.fragmentShader();
+  }
+  super.didUpdateWidget(oldWidget);
+}
+
+  @override
   void dispose() {
     shader.dispose();
     super.dispose();

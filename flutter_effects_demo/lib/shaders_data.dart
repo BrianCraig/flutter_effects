@@ -10,9 +10,9 @@ enum ShaderSample {
     controls: [],
     provider: SizedBox(),
   ),
-  StepsGradient(
-    title: 'Steps Gradients',
-    uri: 'packages/flutter_effects/shaders/noise/simplex/2_s.frag',
+  Splines(
+    title: 'Splines',
+    uri: 'packages/flutter_effects/shaders/splines.frag',
     description: '',
     controls: [],
     provider: SizedBox(),
