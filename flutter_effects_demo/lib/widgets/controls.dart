@@ -99,14 +99,14 @@ class T2DTranslateControl extends ConsumerWidget {
 
   @override
   Widget build(context, ref) {
-    final t2d = ref.watch(Transform2DProvider);
+    final t2d = ref.watch(transform2DProvider);
     return ShaderControl(
       title: 'Translate',
       controls: [
         ShaderControlValue(value: t2d.translation.dx.decimals(3).toString()),
         ShaderControlValue(value: t2d.translation.dy.decimals(3).toString()),
       ],
-      onReset: () => ref.read(Transform2DProvider.notifier).state =
+      onReset: () => ref.read(transform2DProvider.notifier).state =
           t2d.clone(translation: Offset.zero),
     );
   }
@@ -117,28 +117,28 @@ class T2DRotateControl extends ConsumerWidget {
 
   @override
   Widget build(context, ref) {
-    final t2d = ref.watch(Transform2DProvider);
+    final t2d = ref.watch(transform2DProvider);
     return ShaderControl(
       title: 'Rotate',
       controls: [
         ShaderControlValue(value: t2d.rotation.decimals(3).toString()),
         ShaderControlButton(
           onPressed: () {
-            ref.read(Transform2DProvider.notifier).state +=
+            ref.read(transform2DProvider.notifier).state +=
                 const Transform2D(rotation: 1 / 6 * pi);
           },
           icon: Icons.turn_left,
         ),
         ShaderControlButton(
           onPressed: () {
-            ref.read(Transform2DProvider.notifier).state +=
+            ref.read(transform2DProvider.notifier).state +=
                 const Transform2D(rotation: -1 / 6 * pi);
           },
           icon: Icons.turn_right,
         )
       ],
       onReset: () =>
-          ref.read(Transform2DProvider.notifier).state = t2d.clone(rotation: 0),
+          ref.read(transform2DProvider.notifier).state = t2d.clone(rotation: 0),
     );
   }
 }
@@ -184,28 +184,28 @@ class T2DScaleControl extends ConsumerWidget {
 
   @override
   Widget build(context, ref) {
-    final t2d = ref.watch(Transform2DProvider);
+    final t2d = ref.watch(transform2DProvider);
     return ShaderControl(
       title: 'Scale',
       controls: [
         ShaderControlValue(value: t2d.scale.decimals(3).toString()),
         ShaderControlButton(
           onPressed: () {
-            ref.read(Transform2DProvider.notifier).state +=
+            ref.read(transform2DProvider.notifier).state +=
                 const Transform2D(scale: 1 / 1.1);
           },
           icon: Icons.remove,
         ),
         ShaderControlButton(
           onPressed: () {
-            ref.read(Transform2DProvider.notifier).state +=
+            ref.read(transform2DProvider.notifier).state +=
                 const Transform2D(scale: 1.1);
           },
           icon: Icons.add,
         ),
       ],
       onReset: () =>
-          ref.read(Transform2DProvider.notifier).state = t2d.clone(scale: 1),
+          ref.read(transform2DProvider.notifier).state = t2d.clone(scale: 1),
     );
   }
 }

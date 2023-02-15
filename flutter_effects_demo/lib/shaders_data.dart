@@ -10,12 +10,12 @@ List<CustomUniforms> noop(WidgetRef _) => [];
 
 List<CustomUniforms> splinesUniforms(WidgetRef ref) => [
       ColorUniforms(
-        color: ref.read(
+        color: ref.watch(
           colorProvider('background'),
         ),
       ),
       ColorUniforms(
-        color: ref.read(
+        color: ref.watch(
           colorProvider('line'),
         ),
       ),

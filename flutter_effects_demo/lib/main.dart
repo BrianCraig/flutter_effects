@@ -24,7 +24,7 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final programs = ref.watch(FragmentProgramsProvider);
+    final programs = ref.watch(fragmentProgramsProvider);
     return MaterialApp(
       title: 'Flutter Effects Demo',
       theme: ThemeData(
@@ -46,9 +46,9 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ss = ref.watch(ShaderSampleProvider);
-    final t2d = ref.watch(Transform2DProvider);
-    final programs = ref.watch(FragmentProgramsProvider);
+    final ss = ref.watch(shaderSampleProvider);
+    final t2d = ref.watch(transform2DProvider);
+    final programs = ref.watch(fragmentProgramsProvider);
     final time = Time.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +56,7 @@ class MyHomePage extends ConsumerWidget {
       ),
       body: Transform2DGestureWidget(
         value: t2d,
-        onChange: (v) => ref.read(Transform2DProvider.notifier).state = v,
+        onChange: (v) => ref.read(transform2DProvider.notifier).state = v,
         child: FragmentShaderPaint(
           fragmentProgram: programs.value![ss]!,
           uniforms: [
@@ -89,7 +89,7 @@ class ShaderSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final ss = ref.watch(ShaderSampleProvider);
+    final ss = ref.watch(shaderSampleProvider);
     return Row(
       children: ShaderSample.values
           .map(
@@ -103,7 +103,7 @@ class ShaderSelector extends ConsumerWidget {
               onPressed: sample == ss
                   ? null
                   : () {
-                      ref.read(ShaderSampleProvider.notifier).state = sample;
+                      ref.read(shaderSampleProvider.notifier).state = sample;
                     },
               child: Text(sample.title),
             ) as Widget,
@@ -123,7 +123,7 @@ class ShaderControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ss = ref.watch(ShaderSampleProvider);
+    final ss = ref.watch(shaderSampleProvider);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
