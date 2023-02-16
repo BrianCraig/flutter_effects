@@ -20,11 +20,13 @@ jobs:
           pre_run: ""
           build: flutter create --platforms=web . && flutter build web --release
           output: /web
-        - runs_on: windows-latest
-          name: windows-release
-          pre_run: ""
-          build: flutter config --enable-windows-desktop && flutter create --platforms=windows . && flutter build windows
-          output: /windows/runner/Release
+#        - runs_on: windows-latest
+#          name: windows-release
+#          pre_run: ""
+#          build: flutter config --enable-windows-desktop && flutter create --platforms=windows . && flutter build windows
+#          output: /windows/runner/Release
+# TODO: Window runs are Building forever, probably since the addition of Simplex algorithm, check error source and generate bug.
+# Anyways, this should be fixed before release
     runs-on: ${{ matrix.config.runs_on }}
     steps:
       - uses: actions/checkout@v3
@@ -46,6 +48,12 @@ jobs:
         with:
           name: ${{ matrix.config.name }}
           path: ./${{ matrix.config.name }}.zip
+      - name: Upload Web artifact
+        uses: actions/upload-pages-artifact@v1
+        if: ${{ matrix.config.name == 'web-release' }}
+        with:
+          path: ./flutter_effects_demo/build/web/
+
 
   release:
     runs-on: ubuntu-latest
@@ -67,3 +75,18 @@ jobs:
             ./linux-release.zip
             ./web-release.zip
             ./windows-release.zip
+          
+  deploy:
+    needs: build
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
