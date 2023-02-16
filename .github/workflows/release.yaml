@@ -32,13 +32,15 @@ jobs:
         with:
           channel: master
       - run: ${{ matrix.config.pre_run }}
-      - run: ${{ matrix.config.build }}
+      - name: Build
+        working-directory: ./flutter_effects_demo
+        run: ${{ matrix.config.build }}
       - name: Archive Release
         uses: thedoctor0/zip-release@0.6.2
         with:
           type: zip
           filename: ${{ github.workspace }}/${{ matrix.config.name }}.zip
-          directory: ./build${{ matrix.config.output }}
+          directory: ./flutter_effects_demo/build${{ matrix.config.output }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
