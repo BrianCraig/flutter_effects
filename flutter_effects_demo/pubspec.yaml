@@ -26,3 +26,4 @@ flutter:
   shaders:
     - packages/flutter_effects/shaders/simple_gradient.frag
     - packages/flutter_effects/shaders/splines.frag
+    - packages/flutter_effects/shaders/stripes.frag

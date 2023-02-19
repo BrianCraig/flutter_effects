@@ -10,9 +10,7 @@ final shaderSampleProvider = StateProvider<ShaderSample>(
   (ref) => ShaderSample.SimpleGradient,
 );
 
-final fragmentProgramsProvider = FutureProvider<FragmentMap>((ref) async {
-  return getFragmentPrograms();
-});
+final fragmentProgramsProvider = FutureProvider<FragmentMap>((ref) async => getFragmentPrograms());
 
 final transform2DProvider = StateProvider<Transform2D>(
   (_) => const Transform2D(),

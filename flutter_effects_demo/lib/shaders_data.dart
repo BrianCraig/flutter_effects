@@ -38,6 +38,16 @@ enum ShaderSample {
       ColorControl(name: 'line'),
     ],
     uniforms: splinesUniforms,
+  ),
+  Stripes(
+    title: 'Stripes',
+    uri: 'packages/flutter_effects/shaders/stripes.frag',
+    description: '',
+    controls: [
+      ColorControl(name: 'background'),
+      ColorControl(name: 'line'),
+    ],
+    uniforms: splinesUniforms,
   );
 
   final String uri;

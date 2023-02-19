@@ -45,5 +45,4 @@ void main() {
     float interpolation = cubic_interpolate(a, b, c, d, fract(position.x)) *.8 +.1;
     float di = distance(interpolation, fract(position.y));
     fragColor = mix(i_color_line, i_color_background, smoothstep(0, 1, floor(di*PIXEL_SIZE)));
-
 }
