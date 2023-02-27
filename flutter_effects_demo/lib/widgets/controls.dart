@@ -8,6 +8,8 @@ import 'package:flutter_effects_demo/providers.dart';
 import 'package:flutter_effects_demo/widgets/time_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+const multiplier = 1.25;
+
 class ColorPicker extends ConsumerWidget {
   final String name;
   const ColorPicker({required this.name, super.key});
@@ -163,13 +165,13 @@ class TimeControl extends ConsumerWidget {
         ),
         ShaderControlButton(
           onPressed: () {
-            time.tps.multiplier *= 1 / 1.25;
+            time.tps.multiplier *= 1 / multiplier;
           },
           icon: Icons.remove,
         ),
         ShaderControlButton(
           onPressed: () {
-            time.tps.multiplier *= 1.25;
+            time.tps.multiplier *= multiplier;
           },
           icon: Icons.add,
         ),
@@ -192,14 +194,14 @@ class T2DScaleControl extends ConsumerWidget {
         ShaderControlButton(
           onPressed: () {
             ref.read(transform2DProvider.notifier).state +=
-                const Transform2D(scale: 1 / 1.1);
+                const Transform2D(scale: 1 / multiplier);
           },
           icon: Icons.remove,
         ),
         ShaderControlButton(
           onPressed: () {
             ref.read(transform2DProvider.notifier).state +=
-                const Transform2D(scale: 1.1);
+                const Transform2D(scale: multiplier);
           },
           icon: Icons.add,
         ),

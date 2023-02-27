@@ -11,30 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  simple_animations: ^5.0.0+3
-  provider: ^6.0.5
 
 dev_dependencies:
   flutter_lints: ^2.0.0
-
-flutter:
-  shaders:
-    #- lib/shaders/noise_gradient.glsl
-    #- lib/shaders/truchet_tiling.glsl
-    #- lib/shaders/debug.glsl
-    #- lib/shaders/noise_types.glsl
-    #- lib/shaders/scattered_semicircles.glsl
-    - lib/shaders/noise/white_noise.frag
-    - lib/shaders/noise/white_noise_color.frag
-    - lib/shaders/noise/white_noise_color_cell.frag
-    - lib/shaders/voronoi/voronoi.frag
-    - lib/shaders/voronoi/voronoi_time.frag
-    - lib/shaders/noise/gradient/2d/nearest.frag
-    - lib/shaders/noise/gradient/2d/straight_simple.frag
-    - lib/shaders/noise/gradient/2d/straight_dot.frag
-    - lib/shaders/noise/simplex/2_s.frag
-    - lib/shaders/gradient_clouds.frag
-    - lib/shaders/simple_gradient.frag
-
-  uses-material-design: true
